@@ -1,2 +1,2 @@
 # SnakeXMPP
-集成化xmpp库，功能完善中..
+The development of the XMPP library, the function is improving
