@@ -1,4 +1,15 @@
 apply plugin: 'com.android.library'
+apply from: "config_db.gradle"
+
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'org.greenrobot:greendao-gradle-plugin:3.0.0'
+    }
+}
 
 android {
     compileSdkVersion 23
@@ -19,7 +30,24 @@ android {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile fileTree(include: ['*.jar'], dir: 'libs')
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:23.1.1'
+
+    //smack
+    compile 'org.igniterealtime.smack:smack-android:4.1.8'
+    // Optional for XMPPTCPConnection
+    compile 'org.igniterealtime.smack:smack-tcp:4.1.8'
+    // Optional for XMPP-IM (RFC 6121) support (Roster, Threaded Chats, …)
+    compile 'org.igniterealtime.smack:smack-im:4.1.8'
+    // Optional for XMPP extensions support
+    compile 'org.igniterealtime.smack:smack-extensions:4.1.8'
+
+    // greendao
+    compile 'org.greenrobot:greendao:3.0.1'
+    compile 'org.greenrobot:greendao-generator:3.0.0'
+
+    // eventbus
+    compile 'de.greenrobot:eventbus:3.0.0-beta1'
 }
+

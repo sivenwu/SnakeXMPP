@@ -4,8 +4,10 @@
     <application android:allowBackup="true"
         android:label="@string/app_name"
         android:supportsRtl="true"
->
+        >
 
+        <service android:name=".core.managers.SnackService"/>
     </application>
+
 
 </manifest>

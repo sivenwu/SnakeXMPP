@@ -1,0 +1,11 @@
+// for greendao
+
+apply plugin: 'org.greenrobot.greendao'
+
+//config greedao
+greendao {
+    schemaVersion 1
+    daoPackage 'com.snake.kit.db'
+    targetGenDir 'src/main/java'
+}
+
