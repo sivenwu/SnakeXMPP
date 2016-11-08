@@ -6,17 +6,19 @@ import org.jivesoftware.smack.AbstractXMPPConnection;
 
 /**
  * Created by Yuan on 2016/11/7.
- * Detail
+ * Detail 基础管理器...
  */
 
 public class BaseManager {
 
-    private Context context;
-    private AbstractXMPPConnection mConnection;
+    public Context context;
+    public AbstractXMPPConnection mConnection;
 
     public BaseManager(Context context, AbstractXMPPConnection mConnection) {
         this.context = context;
         this.mConnection = mConnection;
     }
+
+
 
 }

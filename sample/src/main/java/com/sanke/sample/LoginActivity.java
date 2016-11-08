@@ -15,9 +15,10 @@ public class LoginActivity extends SnackActivity {
 
     private SnackService mSnackService;
 
-    private String url = "192.168.244.6";
+    private String url = "yyssqe.oicp.net";
     private String name = "siven02";
     private String password = "123";
+    private int port = 25196;
 
     private EditText loginEdit,passwordEidt;
 
@@ -35,7 +36,7 @@ public class LoginActivity extends SnackActivity {
         SnakePref.putObject(SnakeContacts.SMACK_USER_ACCOUNT,loginEdit.getText().toString());
         SnakePref.putObject(SnakeContacts.SMACK_USER_PASSWORD,passwordEidt.getText().toString());
         SnakePref.putObject(SnakeContacts.SMACK_SERVER,url);
-        SnakePref.putObject(SnakeContacts.SMACK_SERVER_PORT,5222);
+        SnakePref.putObject(SnakeContacts.SMACK_SERVER_PORT,port);
 
         //login
         findViewById(R.id.login_btn).setOnClickListener(new View.OnClickListener() {
@@ -43,7 +44,7 @@ public class LoginActivity extends SnackActivity {
             public void onClick(View v) {
                 mSnackService.connect(loginEdit.getText().toString()
                         , passwordEidt.getText().toString()
-                        , url, 5222, new XmppCononectListener() {
+                        , url, port, new XmppCononectListener() {
                             @Override
                             public void connected() {
 

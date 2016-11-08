@@ -6,7 +6,6 @@
         android:supportsRtl="true"
         >
 
-        <service android:name=".core.managers.SnackService"/>
     </application>
 
 

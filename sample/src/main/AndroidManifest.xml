@@ -23,6 +23,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".MainActivity"></activity>
+
+        <service android:name="com.snake.kit.core.managers.SnackService"/>
     </application>
 
 </manifest>
