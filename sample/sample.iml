@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<module external.linked.project.id=":sample" external.linked.project.path="$MODULE_DIR$" external.root.project.path="$MODULE_DIR$/.." external.system.id="GRADLE" version="4">
+<module external.linked.project.id=":sample" external.linked.project.path="$MODULE_DIR$" external.root.project.path="$MODULE_DIR$/.." external.system.id="GRADLE" type="JAVA_MODULE" version="4">
   <component name="FacetManager">
     <facet type="android-gradle" name="Android-Gradle">
       <configuration>
@@ -86,15 +86,11 @@
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/dependency-cache" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/incremental" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/incremental-safeguard" />
-      <excludeFolder url="file://$MODULE_DIR$/build/intermediates/instant-run-support" />
-      <excludeFolder url="file://$MODULE_DIR$/build/intermediates/jniLibs" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/manifests" />
-      <excludeFolder url="file://$MODULE_DIR$/build/intermediates/pre-dexed" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/res" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/rs" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/shaders" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/symbols" />
-      <excludeFolder url="file://$MODULE_DIR$/build/intermediates/transforms" />
       <excludeFolder url="file://$MODULE_DIR$/build/outputs" />
       <excludeFolder url="file://$MODULE_DIR$/build/tmp" />
     </content>
@@ -104,8 +100,8 @@
     <orderEntry type="library" exported="" name="jxmpp-core-0.4.2" level="project" />
     <orderEntry type="library" exported="" name="eventbus-3.0.0-beta1" level="project" />
     <orderEntry type="library" exported="" name="smack-resolver-minidns-4.1.8" level="project" />
-    <orderEntry type="library" exported="" name="smack-android-4.1.8" level="project" />
     <orderEntry type="library" exported="" name="smack-tcp-4.1.8" level="project" />
+    <orderEntry type="library" exported="" name="smack-android-4.1.8" level="project" />
     <orderEntry type="library" exported="" name="greendao-generator-3.0.0" level="project" />
     <orderEntry type="library" exported="" name="smack-im-4.1.8" level="project" />
     <orderEntry type="library" exported="" name="support-v4-23.1.1" level="project" />
@@ -114,9 +110,9 @@
     <orderEntry type="library" exported="" name="smack-core-4.1.8" level="project" />
     <orderEntry type="library" exported="" name="freemarker-2.3.23" level="project" />
     <orderEntry type="library" exported="" scope="TEST" name="junit-4.12" level="project" />
+    <orderEntry type="library" exported="" name="greendao-3.0.1" level="project" />
     <orderEntry type="library" exported="" name="greendao-api-3.0.0" level="project" />
     <orderEntry type="library" exported="" name="minidns-0.1.7" level="project" />
-    <orderEntry type="library" exported="" name="greendao-3.0.1" level="project" />
     <orderEntry type="library" exported="" name="smack-extensions-4.1.8" level="project" />
     <orderEntry type="library" exported="" name="support-annotations-23.1.1" level="project" />
     <orderEntry type="library" exported="" name="appcompat-v7-23.1.1" level="project" />
