@@ -9,7 +9,8 @@ build/
   
   
 # IDEA  
-*.iml  
+*.iml
+.idea/
 .idea/.name  
 .idea/encodings.xml  
 .idea/inspectionProfiles/Project_Default.xml  
