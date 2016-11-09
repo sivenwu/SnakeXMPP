@@ -20,6 +20,7 @@ public class LoginActivity extends SnackActivity {
     private String password = "123";
     private int port = 25196;
 
+    // 来自自己本地分支，测试注释
     private EditText loginEdit,passwordEidt;
 
     @Override
