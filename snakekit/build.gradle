@@ -4,6 +4,9 @@ apply from: "config_db.gradle"
 
 buildscript {
     repositories {
+        maven {
+            url 'https://oss.sonatype.org/content/repositories/snapshots'
+        }
         mavenCentral()
     }
     dependencies {
@@ -13,7 +16,7 @@ buildscript {
 
 android {
     compileSdkVersion 23
-    buildToolsVersion "24.0.1"
+    buildToolsVersion "24.0.2"
 
     defaultConfig {
         minSdkVersion 15
