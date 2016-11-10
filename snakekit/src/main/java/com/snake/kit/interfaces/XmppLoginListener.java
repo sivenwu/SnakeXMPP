@@ -5,10 +5,7 @@ package com.snake.kit.interfaces;
  * Detail xmpp 连接情况回调
  */
 
-public interface XmppCononectListener {
-
-    // 连接成功回调
-    public void connected();
+public interface XmppLoginListener {
 
     // 鉴权成功回调
     public void authenticated();

@@ -31,6 +31,8 @@ public class SnakePref {
         preferencesEditor = preferences.edit();
     }
 
+    //--- put value -------------------------------------------------------------------------------
+
     public static void putObject(String key,Object value){
 
         if (filterNull()){
@@ -39,13 +41,51 @@ public class SnakePref {
         putByType(key,value);
     }
 
-    public static Object getObject(String key,Object defValue){
+    //--- get value -------------------------------------------------------------------------------
 
+    public static String getString(String key,String defValue){
         if (filterNull()){
             throw  new SnakeRuntimeException(EXCEPTION_MESSAGE);
         }
-        return getByType(key,defValue);
+        return preferences.getString(key,defValue);
     }
+
+    public static int getInt(String key,int defValue){
+        if (filterNull()){
+            throw  new SnakeRuntimeException(EXCEPTION_MESSAGE);
+        }
+        return preferences.getInt(key,defValue);
+    }
+
+    public static boolean getBoolean(String key,boolean defValue){
+        if (filterNull()){
+            throw  new SnakeRuntimeException(EXCEPTION_MESSAGE);
+        }
+        return preferences.getBoolean(key,defValue);
+    }
+
+    public static float getFloat(String key,float defValue){
+        if (filterNull()){
+            throw  new SnakeRuntimeException(EXCEPTION_MESSAGE);
+        }
+        return preferences.getFloat(key,defValue);
+    }
+
+    public static long getLong(String key,long defValue){
+        if (filterNull()){
+            throw  new SnakeRuntimeException(EXCEPTION_MESSAGE);
+        }
+        return preferences.getLong(key,defValue);
+    }
+
+//
+//    public static Object getObject(String key,Object defValue){
+//
+//        if (filterNull()){
+//            throw  new SnakeRuntimeException(EXCEPTION_MESSAGE);
+//        }
+//        return getByType(key,defValue);
+//    }
 
     public static void removeObject(String ...keys){
 

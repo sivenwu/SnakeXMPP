@@ -20,7 +20,6 @@ import org.jivesoftware.smackx.ping.packet.Ping;
 /**
  * Created by Yuan on 2016/11/8.
  * Detail 心跳管理机制
- *
  */
 
 public class PingPongManager extends BaseManager{
@@ -132,7 +131,7 @@ public class PingPongManager extends BaseManager{
         public void onReceive(Context ctx, Intent i) {
             if (mConnection.isAuthenticated()) {
                 // 收到ping服务器的闹钟，即ping一下服务器
-                LogTool.d("收到ping服务器的闹钟，即ping一下服务器");
+                LogTool.d("PingAlarmReceiver,ready to send Ping...");
                 sendPingPoingPackaget();
             } else {
                 LogTool.d("Ping: alarm received, but not auth to server.");

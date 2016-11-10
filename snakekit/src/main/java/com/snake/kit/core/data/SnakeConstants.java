@@ -5,7 +5,7 @@ package com.snake.kit.core.data;
  * Detail 提供全局的key
  */
 
-public class SnakeContacts {
+public class SnakeConstants {
 
     public static String SMACK_USER_ACCOUNT = "0";
 

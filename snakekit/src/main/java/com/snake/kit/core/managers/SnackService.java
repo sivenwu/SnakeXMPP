@@ -7,7 +7,9 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 
 import com.snake.kit.apptools.LogTool;
-import com.snake.kit.interfaces.XmppCononectListener;
+import com.snake.kit.apptools.SnakePref;
+import com.snake.kit.core.data.SnakeConstants;
+import com.snake.kit.interfaces.XmppLoginListener;
 
 import org.jivesoftware.smack.AbstractXMPPConnection;
 import org.jivesoftware.smack.ConnectionConfiguration;
@@ -46,7 +48,7 @@ public class SnackService extends Service{
     private int port;
 
     // listener
-    private XmppCononectListener xmppCononectListener;
+    private XmppLoginListener xmppLoginListener;
 
 
     @Nullable
@@ -62,6 +64,9 @@ public class SnackService extends Service{
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        // 这里启动连接服务
+        LogTool.d("smack start to connect..");
+        connect(SnakePref.getString(SnakeConstants.SMACK_SERVER,""),SnakePref.getInt(SnakeConstants.SMACK_SERVER_PORT,5222));
         return super.onStartCommand(intent, flags, startId);
     }
 
@@ -79,23 +84,35 @@ public class SnackService extends Service{
     //--------- SnackService public method----------------------------------------------------------
     //----------------------------------------------------------------------------------------------
 
-    // 连接
-    public void connect(String login, String password, String server,int port,XmppCononectListener xmppCononectListener){
-
-        this.xmppCononectListener = xmppCononectListener;
-        connect(login,password,server,port);
+    // 登录
+    public void login(String userName,String password,XmppLoginListener xmppLoginListener){
+        this.xmppLoginListener = xmppLoginListener;
+        if (mConnection != null){
+            try {
+                mConnection.login(userName,password);
+            } catch (Exception e) {
+                this.xmppLoginListener.onError(e,e.getMessage().toLowerCase());
+                e.printStackTrace();
+            }
+        }
     }
 
+    // 注销登录
+    public void logout(){
 
-    public void connect(String login, String password, String server,int port){
+    }
+
+    //----------------------------------------------------------------------------------------------
+    //--------- SnackService private method---------------------------------------------------------
+    //----------------------------------------------------------------------------------------------
+
+    private void connect(String server,int port){
 
         if (mConnection != null && mConnection.isAuthenticated()){
             LogTool.d("Authentication is valid now !");
             return ;
         }
 
-        this.login = login;
-        this.password = password;
         this.server = server;
         this.port = port;
 
@@ -114,7 +131,7 @@ public class SnackService extends Service{
                     .setPort(this.port)
                     .setServiceName(this.server)
                     .setSendPresence(true)// support presence
-                    .setUsernameAndPassword(this.login,this.password)
+//                    .setUsernameAndPassword(this.login,this.password)
                     .setSecurityMode(ConnectionConfiguration.SecurityMode.disabled)//越过证书
                     .build();
             mConnection = new XMPPTCPConnection(connectionConfiguration);
@@ -122,26 +139,17 @@ public class SnackService extends Service{
                 @Override
                 public void connected(XMPPConnection connection) {
                     LogTool.d("connected");
-                    if (xmppCononectListener != null){
-                        xmppCononectListener.connected();
-                    }
-                    try {
-                        mConnection = (AbstractXMPPConnection) connection;
-                        mConnection.login();
-                    } catch (XMPPException e) {
-                        e.printStackTrace();
-                    } catch (SmackException e) {
-                        e.printStackTrace();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+                    mConnection = (AbstractXMPPConnection) connection;
                 }
 
                 @Override
                 public void authenticated(XMPPConnection connection, boolean resumed) {
                     LogTool.d("authenticated");
-                    if (xmppCononectListener != null){
-                        xmppCononectListener.authenticated();
+                    if (xmppLoginListener != null){
+                        xmppLoginListener.authenticated();
+
+                        // 开始注册服务
+                        registerManagerService();
                     }
                 }
 
@@ -153,9 +161,6 @@ public class SnackService extends Service{
                 @Override
                 public void connectionClosedOnError(Exception e) {
                     LogTool.d("connectionClosedOnError " + e.getMessage().toString());
-                    if (xmppCononectListener != null){
-                        xmppCononectListener.onError(e,e.getMessage().toString());
-                    }
                 }
 
                 @Override
@@ -171,16 +176,12 @@ public class SnackService extends Service{
                 @Override
                 public void reconnectionFailed(Exception e) {
                     LogTool.d("reconnectionFailed "+ e.getMessage().toString());
-                    if (xmppCononectListener != null){
-                        xmppCononectListener.onError(e,e.getMessage().toString());
-                    }
                 }
             });
 
             mConnection.connect();
             initManager();
 
-            pingPongManager.registerPongServer();
         } catch (SmackException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -196,14 +197,7 @@ public class SnackService extends Service{
         }
     }
 
-    // 注销登录
-    public void logout(){
 
-    }
-
-    //----------------------------------------------------------------------------------------------
-    //--------- SnackService private method---------------------------------------------------------
-    //----------------------------------------------------------------------------------------------
     private void initManager(){
         messageManager = new SmackMessageManager(this,mConnection);
         mucManager = new SmackMucManager(this,mConnection);
@@ -211,6 +205,9 @@ public class SnackService extends Service{
         pingPongManager = new PingPongManager(this,mConnection);
     }
 
-
+    private void registerManagerService(){
+        pingPongManager.registerPongServer();
+        //...
+    }
 
 }

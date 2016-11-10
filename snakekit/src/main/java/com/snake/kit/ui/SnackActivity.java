@@ -20,7 +20,7 @@ import com.snake.kit.core.managers.SnackService;
 public abstract class SnackActivity extends AppCompatActivity{
 
     private boolean isBinder = false;
-    private SnackService mSnackService = null;
+    public SnackService mSnackService = null;
 
     private ServiceConnection mServiceConnection = new ServiceConnection() {
         @Override
@@ -44,7 +44,7 @@ public abstract class SnackActivity extends AppCompatActivity{
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        SnakeUtilKit.init(getApplication());
+        SnakeUtilKit.init(getApplication(),getServer(),getServerPort());
         startSnackService();
     }
 
@@ -78,6 +78,8 @@ public abstract class SnackActivity extends AppCompatActivity{
     }
 
     //---------- public method for child------------------------------------------------------------
+    public abstract String getServer();
+    public abstract int getServerPort();
     public abstract void bindByServiceConnect(SnackService mSnackService);
     public abstract void bindByServiceDisconnect();
 }

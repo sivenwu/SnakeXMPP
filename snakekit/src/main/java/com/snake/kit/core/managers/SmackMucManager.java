@@ -6,7 +6,7 @@ import org.jivesoftware.smack.AbstractXMPPConnection;
 
 /**
  * Created by Yuan on 2016/11/7.
- * Detail
+ * Detail Multi User Chat 多人聊天管理器
  */
 
 public class SmackMucManager  extends BaseManager{
