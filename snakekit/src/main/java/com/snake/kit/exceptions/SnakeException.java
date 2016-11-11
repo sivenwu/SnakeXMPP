@@ -21,4 +21,6 @@ public class SnakeException extends Exception {
     public SnakeException(Throwable throwable) {
         super(throwable);
     }
+
+
 }

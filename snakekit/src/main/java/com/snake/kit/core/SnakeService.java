@@ -13,6 +13,7 @@ import com.snake.kit.core.managers.PingPongManager;
 import com.snake.kit.core.managers.SmackMessageManager;
 import com.snake.kit.core.managers.SmackMucManager;
 import com.snake.kit.core.managers.SmackRosterManager;
+import com.snake.kit.core.managers.SmackSessionManager;
 import com.snake.kit.interfaces.XmppLoginListener;
 
 import org.jivesoftware.smack.AbstractXMPPConnection;
@@ -21,6 +22,7 @@ import org.jivesoftware.smack.ConnectionListener;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.roster.Roster;
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smack.tcp.XMPPTCPConnectionConfiguration;
 
@@ -44,6 +46,7 @@ public class SnakeService extends Service{
     private SmackMucManager mucManager;
     private SmackRosterManager rosterManager;
     private PingPongManager pingPongManager;
+    private SmackSessionManager sessionManager;
 
     // User
     private String login;
@@ -87,6 +90,8 @@ public class SnakeService extends Service{
     //--------- SnackService public method----------------------------------------------------------
     //----------------------------------------------------------------------------------------------
 
+    /**公共调用方法*********************************************************************************/
+
     // 登录
     public void login(String userName,String password,XmppLoginListener xmppLoginListener){
         this.xmppLoginListener = xmppLoginListener;
@@ -102,7 +107,44 @@ public class SnakeService extends Service{
 
     // 注销登录
     public void logout(){
+        LogTool.e("logout");
+    }
 
+    /**好友管理调用方法*****************************************************************************/
+    public void getAllRosters(){
+        rosterManager.getAllRosters();;
+    }
+
+    public void addRoster(String user,String name,String groupName) {
+        rosterManager.addRoster(user,name,groupName);
+    }
+
+    public  void setSubscriptionMode(Roster.SubscriptionMode mode) {
+        rosterManager.setSubscriptionMode(mode);
+    }
+
+    public void deleteRoster(String user){
+        rosterManager.deleteRoster(user);
+    }
+
+    public void updateRosterInfo(){
+        rosterManager.updateRosterInfo();
+    }
+
+    public void updateRosterByGroup(String user,String curGroup,String mvGroup){
+        rosterManager.updateRosterByGroup(user,curGroup,mvGroup);
+    }
+
+    public void setGroupName(String groupName,String modifyName){
+        rosterManager.setGroupName(groupName,modifyName);
+    }
+
+    public void addGroup(String groupName){
+        rosterManager.addGroup(groupName);
+    }
+
+    public void deleteGroup(String groupName){
+        rosterManager.deleteGroup(groupName);
     }
 
     //----------------------------------------------------------------------------------------------
@@ -134,6 +176,7 @@ public class SnakeService extends Service{
                     .setPort(this.port)
                     .setServiceName(this.server)
                     .setSendPresence(true)// support presence
+                    .setConnectTimeout(1000 * 10)
 //                    .setUsernameAndPassword(this.login,this.password)
                     .setSecurityMode(ConnectionConfiguration.SecurityMode.disabled)//越过证书
                     .build();
@@ -206,6 +249,7 @@ public class SnakeService extends Service{
         mucManager = new SmackMucManager(this,mConnection);
         rosterManager = new SmackRosterManager(this,mConnection);
         pingPongManager = new PingPongManager(this,mConnection);
+        sessionManager = new SmackSessionManager(this,mConnection);
     }
 
     private void registerManagerService(){
