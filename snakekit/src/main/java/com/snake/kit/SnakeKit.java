@@ -40,7 +40,6 @@ public class SnakeKit extends Observable{
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
-            setChanged();
             notifyChangeData(null);
         }
     };
