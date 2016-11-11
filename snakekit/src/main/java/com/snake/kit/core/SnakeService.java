@@ -1,4 +1,4 @@
-package com.snake.kit.core.managers;
+package com.snake.kit.core;
 
 import android.app.Service;
 import android.content.Intent;
@@ -9,6 +9,10 @@ import android.support.annotation.Nullable;
 import com.snake.kit.apptools.LogTool;
 import com.snake.kit.apptools.SnakePref;
 import com.snake.kit.core.data.SnakeConstants;
+import com.snake.kit.core.managers.PingPongManager;
+import com.snake.kit.core.managers.SmackMessageManager;
+import com.snake.kit.core.managers.SmackMucManager;
+import com.snake.kit.core.managers.SmackRosterManager;
 import com.snake.kit.interfaces.XmppLoginListener;
 
 import org.jivesoftware.smack.AbstractXMPPConnection;
@@ -27,7 +31,7 @@ import java.io.IOException;
  * Detail Xmpp service
  */
 
-public class SnackService extends Service{
+public class SnakeService extends Service{
 
     private final String TAG = "SnackService";
 
@@ -49,7 +53,6 @@ public class SnackService extends Service{
 
     // listener
     private XmppLoginListener xmppLoginListener;
-
 
     @Nullable
     @Override
@@ -77,7 +80,7 @@ public class SnackService extends Service{
 
     // binder for snackService
     public class SnackBinder extends Binder{
-        public SnackService getService(){return SnackService.this;}
+        public SnakeService getService(){return SnakeService.this;}
     }
 
     //----------------------------------------------------------------------------------------------

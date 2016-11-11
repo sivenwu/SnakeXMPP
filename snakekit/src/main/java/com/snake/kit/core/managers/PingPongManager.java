@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 
 import com.snake.kit.apptools.LogTool;
+import com.snake.kit.core.SnakeService;
 
 import org.jivesoftware.smack.AbstractXMPPConnection;
 import org.jivesoftware.smack.SmackException;
@@ -147,7 +148,7 @@ public class PingPongManager extends BaseManager{
             LogTool.d( "Ping: timeout for " + mPingID);
             // 超时就注销登录
             dealTimeOut();
-            ((SnackService)context).logout();
+            ((SnakeService)context).logout();
         }
     }
 

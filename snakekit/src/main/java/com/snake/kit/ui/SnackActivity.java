@@ -10,7 +10,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 
 import com.snake.kit.apptools.SnakeUtilKit;
-import com.snake.kit.core.managers.SnackService;
+import com.snake.kit.core.SnakeService;
 
 /**
  * Created by Yuan on 2016/11/7.
@@ -20,12 +20,12 @@ import com.snake.kit.core.managers.SnackService;
 public abstract class SnackActivity extends AppCompatActivity{
 
     private boolean isBinder = false;
-    public SnackService mSnackService = null;
+    public SnakeService mSnackService = null;
 
     private ServiceConnection mServiceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
-            mSnackService = ((SnackService.SnackBinder) service).getService();
+            mSnackService = ((SnakeService.SnackBinder) service).getService();
             isBinder = true;
 //            mSnackService.connect((String) SnakePref.getObject(SnakeContacts.SMACK_USER_ACCOUNT,"")
 //                    ,(String)SnakePref.getObject(SnakeContacts.SMACK_USER_PASSWORD,"")
@@ -44,6 +44,7 @@ public abstract class SnackActivity extends AppCompatActivity{
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         SnakeUtilKit.init(getApplication(),getServer(),getServerPort());
         startSnackService();
     }
@@ -60,7 +61,7 @@ public abstract class SnackActivity extends AppCompatActivity{
     protected void onStart() {
         super.onStart();
         if (!isBinder){
-            bindService( new Intent(this, SnackService.class), mServiceConnection, Context.BIND_AUTO_CREATE);
+            bindService( new Intent(this, SnakeService.class), mServiceConnection, Context.BIND_AUTO_CREATE);
         }
     }
 
@@ -73,13 +74,13 @@ public abstract class SnackActivity extends AppCompatActivity{
     }
 
     private void startSnackService(){
-        startService(new Intent(this, SnackService.class));
-        bindService( new Intent(this, SnackService.class), mServiceConnection, Context.BIND_AUTO_CREATE);
+        startService(new Intent(this, SnakeService.class));
+        bindService( new Intent(this, SnakeService.class), mServiceConnection, Context.BIND_AUTO_CREATE);
     }
 
     //---------- public method for child------------------------------------------------------------
     public abstract String getServer();
     public abstract int getServerPort();
-    public abstract void bindByServiceConnect(SnackService mSnackService);
+    public abstract void bindByServiceConnect(SnakeService mSnakeService);
     public abstract void bindByServiceDisconnect();
 }

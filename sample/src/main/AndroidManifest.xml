@@ -24,7 +24,7 @@
         </activity>
         <activity android:name=".MainActivity"></activity>
 
-        <service android:name="com.snake.kit.core.managers.SnackService"/>
+        <service android:name="com.snake.kit.core.SnakeService"/>
     </application>
 
 </manifest>
