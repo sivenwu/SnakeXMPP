@@ -1,8 +1,13 @@
 package com.snake.kit.core.managers;
 
 import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
 
-import com.snake.kit.apptools.LogTool;
+import com.snake.kit.apptools.MessageDealUtil;
+import com.snake.kit.apptools.SnakeUtilKit;
+import com.snake.kit.core.data.MessageModel;
+import com.snake.kit.core.receivers.MessageReceiver;
 
 import org.jivesoftware.smack.AbstractXMPPConnection;
 import org.jivesoftware.smack.chat.Chat;
@@ -39,6 +44,16 @@ public class SmackSessionManager extends BaseManager implements ChatManagerListe
 
     @Override
     public void processMessage(Chat chat, Message message) {
-        LogTool.d("" +chat.toString() +" " + message.toString());
+        MessageModel msg = MessageDealUtil.dealMessage(message);
+
+        if (msg.getBody() != null) {
+            Intent intent = new Intent();
+            Bundle bundle = new Bundle();
+            bundle.putParcelable("message", msg);
+
+            intent.putExtras(bundle);
+            intent.setAction(MessageReceiver.SNAKE_MESSAGE_ACTION);
+            SnakeUtilKit.getSnakeApp().sendBroadcast(intent);
+        }
     }
 }
