@@ -21,7 +21,7 @@ public class MainActivity extends AppCompatActivity {
         RosterController.getAllRosters();
 
         // 测试加好友
-        RosterController.addRoster("wusy@siven-pc","wusy","group");
+//        RosterController.addRoster("wusy@siven-pc","wusy","group");
 
     }
 

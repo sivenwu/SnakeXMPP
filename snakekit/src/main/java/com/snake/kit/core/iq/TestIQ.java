@@ -19,8 +19,11 @@ public class TestIQ extends IQ{
     private String var2;
     private String var3;
 
-    public TestIQ(IQ iq) {
-        super(iq);
+    public TestIQ(String var1, String var2, String var3) {
+        super("test","test");
+        this.var1 = var1;
+        this.var2 = var2;
+        this.var3 = var3;
     }
 
     public String getVar1() {
@@ -53,9 +56,10 @@ public class TestIQ extends IQ{
 
     @Override
     protected IQChildElementXmlStringBuilder getIQChildElementBuilder(IQChildElementXmlStringBuilder xml) {
-
-
-        return null;
+        xml.append("<var1>").append(var1).append("</var1>");
+        xml.append("<var2>").append(var2).append("</var2>");
+        xml.append("<var3>").append(var1).append("</var3>");
+        return xml;
     }
 
     public class TestProvider extends IntrospectionProvider.IQIntrospectionProvider<TestIQ> {
