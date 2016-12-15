@@ -4,8 +4,9 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
-import com.snake.kit.apptools.LogTool;
-import com.snake.kit.core.data.MessageModel;
+import com.snake.api.apptools.LogTool;
+import com.snake.api.data.MessageModel;
+
 
 /**
  * Created by Yuan on 2016/11/14.

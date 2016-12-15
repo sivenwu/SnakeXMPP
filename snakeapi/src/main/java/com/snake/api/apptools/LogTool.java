@@ -1,4 +1,4 @@
-package com.snake.kit.apptools;
+package com.snake.api.apptools;
 
 import android.util.Log;
 

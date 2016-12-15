@@ -1,6 +1,6 @@
 package com.snake.kit.controllers;
 
-import com.snake.kit.apptools.LogTool;
+import com.snake.api.apptools.LogTool;
 import com.snake.kit.core.SnakeService;
 
 import java.util.Observable;

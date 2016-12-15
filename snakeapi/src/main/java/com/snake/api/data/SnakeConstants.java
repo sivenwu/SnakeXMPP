@@ -1,4 +1,4 @@
-package com.snake.kit.core.data;
+package com.snake.api.data;
 
 /**
  * Created by Yuan on 2016/11/7.
