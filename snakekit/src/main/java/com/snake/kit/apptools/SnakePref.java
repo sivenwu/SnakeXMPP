@@ -21,61 +21,58 @@ public class SnakePref {
     private static SharedPreferences.Editor preferencesEditor;
 
 
-    public static void init(Application application){
-        preferences = application.getSharedPreferences(PREF_NAME,SP_MODE);
+    public static void init(Application application) {
+        preferences = application.getSharedPreferences(PREF_NAME, SP_MODE);
         preferencesEditor = preferences.edit();
     }
 
-    public static void init(Activity activity){
-        preferences = activity.getApplication().getSharedPreferences(PREF_NAME,SP_MODE);
+    public static void init(Activity activity) {
+        preferences = activity.getApplication().getSharedPreferences(PREF_NAME, SP_MODE);
         preferencesEditor = preferences.edit();
     }
 
     //--- put value -------------------------------------------------------------------------------
 
-    public static void putObject(String key,Object value){
-
-        if (filterNull()){
-            throw  new SnakeRuntimeException(EXCEPTION_MESSAGE);
-        }
-        putByType(key,value);
+    public static void putObject(String key, Object value) {
+        if (filterNull()) throw new SnakeRuntimeException(EXCEPTION_MESSAGE);
+        putByType(key, value);
     }
 
     //--- get value -------------------------------------------------------------------------------
 
-    public static String getString(String key,String defValue){
-        if (filterNull()){
-            throw  new SnakeRuntimeException(EXCEPTION_MESSAGE);
+    public static String getString(String key, String defValue) {
+        if (filterNull()) {
+            throw new SnakeRuntimeException(EXCEPTION_MESSAGE);
         }
-        return preferences.getString(key,defValue);
+        return preferences.getString(key, defValue);
     }
 
-    public static int getInt(String key,int defValue){
-        if (filterNull()){
-            throw  new SnakeRuntimeException(EXCEPTION_MESSAGE);
+    public static int getInt(String key, int defValue) {
+        if (filterNull()) {
+            throw new SnakeRuntimeException(EXCEPTION_MESSAGE);
         }
-        return preferences.getInt(key,defValue);
+        return preferences.getInt(key, defValue);
     }
 
-    public static boolean getBoolean(String key,boolean defValue){
-        if (filterNull()){
-            throw  new SnakeRuntimeException(EXCEPTION_MESSAGE);
+    public static boolean getBoolean(String key, boolean defValue) {
+        if (filterNull()) {
+            throw new SnakeRuntimeException(EXCEPTION_MESSAGE);
         }
-        return preferences.getBoolean(key,defValue);
+        return preferences.getBoolean(key, defValue);
     }
 
-    public static float getFloat(String key,float defValue){
-        if (filterNull()){
-            throw  new SnakeRuntimeException(EXCEPTION_MESSAGE);
+    public static float getFloat(String key, float defValue) {
+        if (filterNull()) {
+            throw new SnakeRuntimeException(EXCEPTION_MESSAGE);
         }
-        return preferences.getFloat(key,defValue);
+        return preferences.getFloat(key, defValue);
     }
 
-    public static long getLong(String key,long defValue){
-        if (filterNull()){
-            throw  new SnakeRuntimeException(EXCEPTION_MESSAGE);
+    public static long getLong(String key, long defValue) {
+        if (filterNull()) {
+            throw new SnakeRuntimeException(EXCEPTION_MESSAGE);
         }
-        return preferences.getLong(key,defValue);
+        return preferences.getLong(key, defValue);
     }
 
 //
@@ -87,55 +84,51 @@ public class SnakePref {
 //        return getByType(key,defValue);
 //    }
 
-    public static void removeObject(String ...keys){
+    public static void removeObject(String... keys) {
 
-        if (filterNull()){
-            throw  new SnakeRuntimeException(EXCEPTION_MESSAGE);
+        if (filterNull()) {
+            throw new SnakeRuntimeException(EXCEPTION_MESSAGE);
         }
 
-        for (String key : keys){
+        for (String key : keys) {
             preferencesEditor.remove(key);
         }
         preferencesEditor.commit();
     }
 
-    private static void putByType(String key,Object value){
-
+    private static void putByType(String key, Object value) {
         if (value instanceof Integer) {
             preferencesEditor.putInt(key, (Integer) value);
-        }else if (value instanceof Boolean) {
+        } else if (value instanceof Boolean) {
             preferencesEditor.putBoolean(key, (Boolean) value);
-        }else if (value instanceof Float) {
+        } else if (value instanceof Float) {
             preferencesEditor.putFloat(key, (Float) value);
-        }else if (value instanceof Long) {
+        } else if (value instanceof Long) {
             preferencesEditor.putLong(key, (Long) value);
-        }else if (value instanceof  String) {
+        } else if (value instanceof String) {
             preferencesEditor.putString(key, (String) value);
         }
         preferencesEditor.commit();
     }
 
-    private static Object getByType(String key,Object value){
-
+    private static Object getByType(String key, Object value) {
         Object result = null;
-
         if (value instanceof Integer) {
-            preferences.getInt(key, (Integer) value);
-        }else if (value instanceof Boolean) {
-            preferences.getBoolean(key, (Boolean) value);
-        }else if (value instanceof Float) {
-            preferences.getFloat(key, (Float) value);
-        }else if (value instanceof Long) {
-            preferences.getLong(key, (Long) value);
-        }else if (value instanceof  String) {
-            preferences.getString(key, (String) value);
+            result = preferences.getInt(key, (Integer) value);
+        } else if (value instanceof Boolean) {
+            result = preferences.getBoolean(key, (Boolean) value);
+        } else if (value instanceof Float) {
+            result = preferences.getFloat(key, (Float) value);
+        } else if (value instanceof Long) {
+            result = preferences.getLong(key, (Long) value);
+        } else if (value instanceof String) {
+            result = preferences.getString(key, (String) value);
         }
-
         return result;
     }
 
-    private static boolean filterNull(){
-        return (preferences==null || preferencesEditor== null) ? true : false;
+    private static boolean filterNull() {
+        return preferences == null || preferencesEditor == null;
     }
 
 

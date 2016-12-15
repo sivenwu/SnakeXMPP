@@ -23,11 +23,11 @@ import java.util.Collection;
  * Detail 好友管理
  */
 
-public class SmackRosterManager extends BaseManager implements IRosterManager,RosterListener,RosterEntries{
+public class SmackRosterManager extends BaseManager implements IRosterManager, RosterListener, RosterEntries {
 
     // info
     private Roster mRoster;
-    private SparseArray mUserList; // key ：（jid 对于的主键） value ：RosterEntry
+    private SparseArray mUserList; // key ：（jid 对应的主键） value ：RosterEntry
 
     public SmackRosterManager(Context context, AbstractXMPPConnection mConnection) {
         super(context, mConnection);
@@ -62,18 +62,18 @@ public class SmackRosterManager extends BaseManager implements IRosterManager,Ro
     @Override
     public void rosterEntires(Collection<RosterEntry> rosterEntries) {
         // 处理获取RosterEntry
-        for (RosterEntry entry : rosterEntries){
+        for (RosterEntry entry : rosterEntries) {
             String gourpName = "";
             String userName;
             String jid;
-            for (RosterGroup rosterGroup :  entry.getGroups()){
+            for (RosterGroup rosterGroup : entry.getGroups()) {
                 gourpName = rosterGroup.getName();
             }
 
             userName = entry.getName();
             jid = entry.getUser();
 
-            LogTool.d("gourpName " + gourpName +" userName "+userName +" jid "+jid);
+            LogTool.d("gourpName " + gourpName + " userName " + userName + " jid " + jid);
 //            mUserList.put(jid,entry);
 
             processPresence(mRoster.getPresence(jid));
@@ -87,48 +87,43 @@ public class SmackRosterManager extends BaseManager implements IRosterManager,Ro
 
     @Override
     public void getAllRosters() {
-        if (!mRoster.isLoaded()){
+        if (!mRoster.isLoaded()) {
             try {
                 mRoster.reloadAndWait();
-            } catch (SmackException.NotLoggedInException e) {
-                e.printStackTrace();
-            } catch (SmackException.NotConnectedException e) {
-                e.printStackTrace();
-            } catch (InterruptedException e) {
+            } catch (SmackException.NotLoggedInException |
+                    SmackException.NotConnectedException |
+                    InterruptedException e) {
                 e.printStackTrace();
             }
         }
-        mRoster.getEntriesAndAddListener(this,this);
+        mRoster.getEntriesAndAddListener(this, this);
     }
 
     @Override
     public void deleteRoster(String user) {
         RosterEntry entry = mRoster.getEntry(user);
-        if (entry != null){
+        if (entry != null) {
             try {
                 mRoster.removeEntry(entry);
                 // 删除数据库
-            } catch (SmackException.NotLoggedInException e) {
-                e.printStackTrace();
-            } catch (SmackException.NoResponseException e) {
-                e.printStackTrace();
-            } catch (XMPPException.XMPPErrorException e) {
-                e.printStackTrace();
-            } catch (SmackException.NotConnectedException e) {
+            } catch (SmackException.NotLoggedInException |
+                    SmackException.NoResponseException |
+                    XMPPException.XMPPErrorException |
+                    SmackException.NotConnectedException e) {
                 e.printStackTrace();
             }
         }
     }
 
     @Override
-    public void addRoster(String user,String name,String groupName) {
-        addRosyer(user,name,new String[]{groupName});
+    public void addRoster(String user, String name, String groupName) {
+        addRosyer(user, name, new String[]{groupName});
     }
 
-    private void addRosyer(String user,String name,String[] groupName){
-        if (mConnection.isAuthenticated()){
+    private void addRosyer(String user, String name, String[] groupName) {
+        if (mConnection.isAuthenticated()) {
             try {
-                mRoster.createEntry(user,name,groupName);
+                mRoster.createEntry(user, name, groupName);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -141,25 +136,23 @@ public class SmackRosterManager extends BaseManager implements IRosterManager,Ro
     }
 
     @Override
-    public void updateRosterByGroup(String user,String curGroup,String mvGroup) {
-        RosterGroup cGroup =  mRoster.getGroup(curGroup);
-        RosterGroup mGroup =  mRoster.getGroup(mvGroup);
+    public void updateRosterByGroup(String user, String curGroup, String mvGroup) {
+        RosterGroup cGroup = mRoster.getGroup(curGroup);
+        RosterGroup mGroup = mRoster.getGroup(mvGroup);
         RosterEntry entry = null;
-        if (cGroup != null){
+        if (cGroup != null) {
             entry = cGroup.getEntry(user);
-            if (entry != null){
+            if (entry != null) {
                 try {
-                    if (mGroup == null){
+                    if (mGroup == null) {
                         // 不存在该分组 即创建
                         mGroup = mRoster.createGroup(mvGroup);
                     }
                     cGroup.removeEntry(entry);
                     mGroup.addEntry(entry);
-                } catch (SmackException.NoResponseException e) {
-                    e.printStackTrace();
-                } catch (XMPPException.XMPPErrorException e) {
-                    e.printStackTrace();
-                } catch (SmackException.NotConnectedException e) {
+                } catch (SmackException.NoResponseException |
+                        SmackException.NotConnectedException |
+                        XMPPException.XMPPErrorException e) {
                     e.printStackTrace();
                 }
             }
@@ -167,16 +160,14 @@ public class SmackRosterManager extends BaseManager implements IRosterManager,Ro
     }
 
     @Override
-    public void setGroupName(String groupName,String modifyName) {
-       RosterGroup group =  mRoster.getGroup(groupName);
-        if (group !=null){
+    public void setGroupName(String groupName, String modifyName) {
+        RosterGroup group = mRoster.getGroup(groupName);
+        if (group != null) {
             try {
                 group.setName(modifyName);
-            } catch (SmackException.NotConnectedException e) {
-                e.printStackTrace();
-            } catch (SmackException.NoResponseException e) {
-                e.printStackTrace();
-            } catch (XMPPException.XMPPErrorException e) {
+            } catch (SmackException.NotConnectedException |
+                    SmackException.NoResponseException |
+                    XMPPException.XMPPErrorException e) {
                 e.printStackTrace();
             }
         }
@@ -189,19 +180,19 @@ public class SmackRosterManager extends BaseManager implements IRosterManager,Ro
 
     @Override
     public void deleteGroup(String groupName) {
-       // 不支持..
+        // 不支持..
 
     }
 
     //---------------------------------------------------------------------------------------------
 
     // 获取用户状态
-    private void processPresence(Presence presence){
+    private void processPresence(Presence presence) {
 
-        Presence.Mode mode =  presence.getMode();
+        Presence.Mode mode = presence.getMode();
         Presence.Type type = presence.getType();
 
-        switch (type){
+        switch (type) {
             case available:
 
                 break;
@@ -217,7 +208,7 @@ public class SmackRosterManager extends BaseManager implements IRosterManager,Ro
 
         }
 
-        switch (mode){
+        switch (mode) {
             case available:
 
                 break;

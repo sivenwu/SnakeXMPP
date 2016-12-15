@@ -21,10 +21,10 @@ import java.util.Observable;
 
 /**
  * Created by Yuan on 2016/11/4.
- * Detail
+ * Detail 全局配置入口
  */
 
-public class SnakeKit extends Observable{
+public class SnakeKit extends Observable {
 
     private static SnakeKit kit = new SnakeKit();
 
@@ -44,17 +44,17 @@ public class SnakeKit extends Observable{
         }
     };
 
-    public static SnakeKit getKit(){
-        if (kit == null){
+    public static SnakeKit getKit() {
+        if (kit == null) {
             kit = new SnakeKit();
         }
         return kit;
     }
 
-    public void init(Application application,String server,int port){
+    public void init(Application application, String server, int port) {
 
         // 工具初始化
-        SnakeUtilKit.init(application,server,port);
+        SnakeUtilKit.init(application, server, port);
 
         // 注册控制器
         registerAppControllers();
@@ -65,17 +65,18 @@ public class SnakeKit extends Observable{
 
     //----------------------------------------------------------------------------------------------
 
-    private void notifyChangeData(Object obj){
+    private void notifyChangeData(Object obj) {
         setChanged();
         notifyObservers(obj);
     }
 
-    private void startSnakeService(Application application){
+    private void startSnakeService(Application application) {
         application.startService(new Intent(application, SnakeService.class));
-        application.bindService( new Intent(application, SnakeService.class), mServiceConnection, Context.BIND_AUTO_CREATE);
+        application.bindService(new Intent(application, SnakeService.class),
+                mServiceConnection, Context.BIND_AUTO_CREATE);
     }
 
-    private void registerAppControllers(){
+    private void registerAppControllers() {
         addObserver(new PublicController());
         addObserver(new MessageController());
         addObserver(new MucController());

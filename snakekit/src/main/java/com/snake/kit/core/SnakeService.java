@@ -33,7 +33,7 @@ import java.io.IOException;
  * Detail Xmpp service
  */
 
-public class SnakeService extends Service{
+public class SnakeService extends Service {
 
     private final String TAG = "SnackService";
 
@@ -72,7 +72,7 @@ public class SnakeService extends Service{
     public int onStartCommand(Intent intent, int flags, int startId) {
         // 这里启动连接服务
         LogTool.d("smack start to connect..");
-        connect(SnakePref.getString(SnakeConstants.SMACK_SERVER,""),SnakePref.getInt(SnakeConstants.SMACK_SERVER_PORT,5222));
+        connect(SnakePref.getString(SnakeConstants.SMACK_SERVER, ""), SnakePref.getInt(SnakeConstants.SMACK_SERVER_PORT, 5222));
         return super.onStartCommand(intent, flags, startId);
     }
 
@@ -82,68 +82,75 @@ public class SnakeService extends Service{
     }
 
     // binder for snackService
-    public class SnackBinder extends Binder{
-        public SnakeService getService(){return SnakeService.this;}
+    public class SnackBinder extends Binder {
+        public SnakeService getService() {
+            return SnakeService.this;
+        }
     }
 
     //----------------------------------------------------------------------------------------------
     //--------- SnackService public method----------------------------------------------------------
     //----------------------------------------------------------------------------------------------
 
-    /**公共调用方法*********************************************************************************/
+    /**
+     * 公共调用方法
+     *********************************************************************************/
 
     // 登录
-    public void login(String userName,String password,XmppLoginListener xmppLoginListener){
+    public void login(String userName, String password, XmppLoginListener xmppLoginListener) {
         this.xmppLoginListener = xmppLoginListener;
-        if (mConnection != null){
+        if (mConnection != null) {
             try {
-                mConnection.login(userName,password);
+                mConnection.login(userName, password);
             } catch (Exception e) {
-                this.xmppLoginListener.onError(e,e.getMessage().toLowerCase());
+                this.xmppLoginListener.onError(e, e.getMessage().toLowerCase());
                 e.printStackTrace();
             }
         }
     }
 
     // 注销登录
-    public void logout(){
+    public void logout() {
         LogTool.e("logout");
     }
 
-    /**好友管理调用方法*****************************************************************************/
-    public void getAllRosters(){
-        rosterManager.getAllRosters();;
+    /**
+     * 好友管理调用方法
+     *****************************************************************************/
+    public void getAllRosters() {
+        rosterManager.getAllRosters();
+        ;
     }
 
-    public void addRoster(String user,String name,String groupName) {
-        rosterManager.addRoster(user,name,groupName);
+    public void addRoster(String user, String name, String groupName) {
+        rosterManager.addRoster(user, name, groupName);
     }
 
-    public  void setSubscriptionMode(Roster.SubscriptionMode mode) {
+    public void setSubscriptionMode(Roster.SubscriptionMode mode) {
         rosterManager.setSubscriptionMode(mode);
     }
 
-    public void deleteRoster(String user){
+    public void deleteRoster(String user) {
         rosterManager.deleteRoster(user);
     }
 
-    public void updateRosterInfo(){
+    public void updateRosterInfo() {
         rosterManager.updateRosterInfo();
     }
 
-    public void updateRosterByGroup(String user,String curGroup,String mvGroup){
-        rosterManager.updateRosterByGroup(user,curGroup,mvGroup);
+    public void updateRosterByGroup(String user, String curGroup, String mvGroup) {
+        rosterManager.updateRosterByGroup(user, curGroup, mvGroup);
     }
 
-    public void setGroupName(String groupName,String modifyName){
-        rosterManager.setGroupName(groupName,modifyName);
+    public void setGroupName(String groupName, String modifyName) {
+        rosterManager.setGroupName(groupName, modifyName);
     }
 
-    public void addGroup(String groupName){
+    public void addGroup(String groupName) {
         rosterManager.addGroup(groupName);
     }
 
-    public void deleteGroup(String groupName){
+    public void deleteGroup(String groupName) {
         rosterManager.deleteGroup(groupName);
     }
 
@@ -151,11 +158,11 @@ public class SnakeService extends Service{
     //--------- SnackService private method---------------------------------------------------------
     //----------------------------------------------------------------------------------------------
 
-    private void connect(String server,int port){
+    private void connect(String server, int port) {
 
-        if (mConnection != null && mConnection.isAuthenticated()){
+        if (mConnection != null && mConnection.isAuthenticated()) {
             LogTool.d("Authentication is valid now !");
-            return ;
+            return;
         }
 
         this.server = server;
@@ -169,9 +176,9 @@ public class SnakeService extends Service{
         }).start();
     }
 
-    private void justConnect(){
+    private void justConnect() {
         try {
-            XMPPTCPConnectionConfiguration connectionConfiguration =  XMPPTCPConnectionConfiguration.builder()
+            XMPPTCPConnectionConfiguration connectionConfiguration = XMPPTCPConnectionConfiguration.builder()
                     .setHost(this.server)
                     .setPort(this.port)
                     .setServiceName(this.server)
@@ -191,7 +198,7 @@ public class SnakeService extends Service{
                 @Override
                 public void authenticated(XMPPConnection connection, boolean resumed) {
                     LogTool.d("authenticated");
-                    if (xmppLoginListener != null){
+                    if (xmppLoginListener != null) {
                         xmppLoginListener.authenticated();
 
                         // 开始注册服务
@@ -221,38 +228,34 @@ public class SnakeService extends Service{
 
                 @Override
                 public void reconnectionFailed(Exception e) {
-                    LogTool.d("reconnectionFailed "+ e.getMessage().toString());
+                    LogTool.d("reconnectionFailed " + e.getMessage().toString());
                 }
             });
 
             mConnection.connect();
             initManager();
 
-        } catch (SmackException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (XMPPException e) {
+        } catch (SmackException | IOException | XMPPException e) {
             e.printStackTrace();
         }
     }
 
-    public void disConnect(){
-        if (mConnection != null){
+    public void disConnect() {
+        if (mConnection != null) {
             mConnection.disconnect();
         }
     }
 
 
-    private void initManager(){
-        messageManager = new SmackMessageManager(this,mConnection);
-        mucManager = new SmackMucManager(this,mConnection);
-        rosterManager = new SmackRosterManager(this,mConnection);
-        pingPongManager = new PingPongManager(this,mConnection);
-        sessionManager = new SmackSessionManager(this,mConnection);
+    private void initManager() {
+        messageManager = new SmackMessageManager(this, mConnection);
+        mucManager = new SmackMucManager(this, mConnection);
+        rosterManager = new SmackRosterManager(this, mConnection);
+        pingPongManager = new PingPongManager(this, mConnection);
+        sessionManager = new SmackSessionManager(this, mConnection);
     }
 
-    private void registerManagerService(){
+    private void registerManagerService() {
         pingPongManager.registerPongServer();
         //...
     }

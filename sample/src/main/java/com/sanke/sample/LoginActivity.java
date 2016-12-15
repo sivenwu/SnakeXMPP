@@ -19,7 +19,7 @@ public class LoginActivity extends AppCompatActivity {
     private int port = 25196;
 
     // 来自自己本地分支，测试注释
-    private EditText loginEdit,passwordEidt;
+    private EditText loginEdit, passwordEidt;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,7 +27,7 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         // 初始化snake
-        SnakeKit.getKit().init(getApplication(),url,port);
+        SnakeKit.getKit().init(getApplication(), url, port);
 
         loginEdit = (EditText) findViewById(R.id.login_account);
         passwordEidt = (EditText) findViewById(R.id.login_password);
@@ -43,8 +43,8 @@ public class LoginActivity extends AppCompatActivity {
                     @Override
                     public void authenticated() {
                         // 鉴权成功
-                        Toast.makeText(LoginActivity.this,"登录成功！！",Toast.LENGTH_SHORT).show();
-                        startActivity(new Intent(LoginActivity.this,MainActivity.class));
+                        Toast.makeText(LoginActivity.this, "登录成功！！", Toast.LENGTH_SHORT).show();
+                        startActivity(new Intent(LoginActivity.this, MainActivity.class));
                         finish();
                     }
 

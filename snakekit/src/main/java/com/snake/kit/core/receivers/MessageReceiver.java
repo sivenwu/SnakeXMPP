@@ -12,22 +12,22 @@ import com.snake.kit.core.data.MessageModel;
  * Detail 消息广播接收器
  */
 
-public abstract class MessageReceiver extends BroadcastReceiver{
+public abstract class MessageReceiver extends BroadcastReceiver {
 
     public static String SNAKE_MESSAGE_ACTION = "com.snake.kit.core.receiver.action";
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        if (intent != null){
-            if (intent.getExtras()!=null){
+        if (intent != null) {
+            if (intent.getExtras() != null) {
                 MessageModel message = intent.getExtras().getParcelable("message");
                 LogTool.i(message.toString());
-                onMessage(context,message,message.getBody());
+                onMessage(context, message, message.getBody());
             }
         }
     }
 
     // 外抛抽象方法
-    public abstract void onMessage(Context context,  MessageModel message ,String messag);
+    public abstract void onMessage(Context context, MessageModel message, String messag);
 
 }

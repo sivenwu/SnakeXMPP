@@ -10,30 +10,30 @@ import org.jivesoftware.smack.roster.Roster;
 public interface IRosterManager {
 
     // 添加好友的权限
-    public void setSubscriptionMode(Roster.SubscriptionMode subscriptionMode);
+    void setSubscriptionMode(Roster.SubscriptionMode subscriptionMode);
 
     // 获取所有好友以及列表
-    public void getAllRosters();
+    void getAllRosters();
 
     // 删除好友
-    public void deleteRoster(String user);
+    void deleteRoster(String user);
 
     // 添加好友
-    public void addRoster(String user,String name,String groupName);
+    void addRoster(String user, String name, String groupName);
 
     // 更改好友信息
-    public void updateRosterInfo();
+    void updateRosterInfo();
 
     // 移动好友列表
-    public void updateRosterByGroup(String user,String curGroup,String mvGroup);
+    void updateRosterByGroup(String user, String curGroup, String mvGroup);
 
     // 重命名分组
-    public void setGroupName(String groupName,String modifyName);
+    void setGroupName(String groupName, String modifyName);
 
     // 添加分组
-    public void addGroup(String groupName);
+    void addGroup(String groupName);
 
     // 删除分组
-    public void deleteGroup(String groupName);
+    void deleteGroup(String groupName);
 
 }

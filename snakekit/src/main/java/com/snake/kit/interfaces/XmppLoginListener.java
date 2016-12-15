@@ -6,11 +6,10 @@ package com.snake.kit.interfaces;
  */
 
 public interface XmppLoginListener {
-
     // 鉴权成功回调
-    public void authenticated();
+    void authenticated();
 
     // 失败统一抛出
-    public void onError(Exception e,String message);
+    void onError(Exception e, String message);
 
 }
