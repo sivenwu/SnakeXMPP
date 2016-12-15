@@ -1,18 +1,4 @@
 apply plugin: 'com.android.library'
-apply from: "config_db.gradle"
-
-
-buildscript {
-    repositories {
-        maven {
-            url 'https://oss.sonatype.org/content/repositories/snapshots'
-        }
-        mavenCentral()
-    }
-    dependencies {
-        classpath 'org.greenrobot:greendao-gradle-plugin:3.0.0'
-    }
-}
 
 android {
     compileSdkVersion 23
@@ -45,10 +31,6 @@ dependencies {
     compile 'org.igniterealtime.smack:smack-im:4.1.8'
     // Optional for XMPP extensions support
     compile 'org.igniterealtime.smack:smack-extensions:4.1.8'
-
-    // greendao
-    compile 'org.greenrobot:greendao:3.0.1'
-    compile 'org.greenrobot:greendao-generator:3.0.0'
 
     // eventbus
 //    compile 'de.greenrobot:eventbus:3.0.0-beta1'

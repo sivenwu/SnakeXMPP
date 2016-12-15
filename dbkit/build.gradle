@@ -1,4 +1,6 @@
 apply plugin: 'com.android.library'
+apply plugin: 'org.greenrobot.greendao'
+apply from: "config_db.gradle"
 
 android {
     compileSdkVersion 24
@@ -28,4 +30,6 @@ dependencies {
     })
     compile 'com.android.support:appcompat-v7:24.2.1'
     testCompile 'junit:junit:4.12'
+
+    compile 'org.greenrobot:greendao:3.2.0'//for greendao
 }
