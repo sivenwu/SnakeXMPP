@@ -7,8 +7,8 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.snake.kit.SnakeKit;
 import com.snake.kit.controllers.PublicController;
+import com.snake.kit.core.data.SnakeRouter;
 import com.snake.kit.interfaces.XmppLoginListener;
 
 public class LoginActivity extends AppCompatActivity {
@@ -26,8 +26,8 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        // 初始化snake
-        SnakeKit.getKit().init(getApplication(), url, port);
+//        // 初始化snake
+//        SnakeKit.getKit().init(getApplication(), url, port);
 
         loginEdit = (EditText) findViewById(R.id.login_account);
         passwordEidt = (EditText) findViewById(R.id.login_password);
@@ -53,6 +53,14 @@ public class LoginActivity extends AppCompatActivity {
 
                     }
                 });
+            }
+        });
+
+        // test
+        findViewById(R.id.test_btn).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SnakeRouter.instance().test(LoginActivity.this);
             }
         });
 
