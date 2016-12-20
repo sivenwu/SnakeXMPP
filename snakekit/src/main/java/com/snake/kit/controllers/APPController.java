@@ -1,6 +1,7 @@
 package com.snake.kit.controllers;
 
 import com.snake.api.apptools.LogTool;
+import com.snake.kit.SnakeKit;
 import com.snake.kit.core.SnakeService;
 
 import java.util.Observable;
@@ -23,6 +24,7 @@ public class APPController implements Observer{
     protected static boolean isRunning(){
         if (mSnakeService == null){
             // TODO: 2016/11/11  这里以后控制重新启动服务..
+            SnakeKit.getKit().restartSnakeService();
             LogTool.d(MSG);
             return false;
         }
