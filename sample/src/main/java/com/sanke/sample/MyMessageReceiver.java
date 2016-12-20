@@ -3,7 +3,7 @@ package com.sanke.sample;
 import android.content.Context;
 import android.widget.Toast;
 
-import com.snake.kit.core.data.MessageModel;
+import com.snake.api.data.MessageModel;
 import com.snake.kit.core.receivers.MessageReceiver;
 
 /**

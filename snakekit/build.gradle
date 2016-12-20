@@ -22,7 +22,6 @@ dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:23.1.1'
-
     //smack
     compile 'org.igniterealtime.smack:smack-android:4.1.8'
     // Optional for XMPPTCPConnection
@@ -33,6 +32,7 @@ dependencies {
     compile 'org.igniterealtime.smack:smack-extensions:4.1.8'
 
     // eventbus
-//    compile 'de.greenrobot:eventbus:3.0.0-beta1'
+    //    compile 'de.greenrobot:eventbus:3.0.0-beta1'
+    compile project(':snakeapi')
 }
 

@@ -1,4 +1,4 @@
-package cn.snake.dbkit.data;
+package cn.snake.dbkit.dao;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;

@@ -7,7 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 
-import com.snake.kit.apptools.LogTool;
+import com.snake.api.apptools.LogTool;
 import com.snake.kit.core.SnakeService;
 
 import org.jivesoftware.smack.AbstractXMPPConnection;

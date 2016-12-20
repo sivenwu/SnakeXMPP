@@ -6,9 +6,9 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 
-import com.snake.kit.apptools.LogTool;
-import com.snake.kit.apptools.SnakePref;
-import com.snake.kit.core.data.SnakeConstants;
+import com.snake.api.apptools.LogTool;
+import com.snake.api.apptools.SnakePref;
+import com.snake.api.data.SnakeConstants;
 import com.snake.kit.core.managers.PingPongManager;
 import com.snake.kit.core.managers.SmackMessageManager;
 import com.snake.kit.core.managers.SmackMucManager;

@@ -7,8 +7,8 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.IBinder;
 
-import com.snake.kit.apptools.LogTool;
-import com.snake.kit.apptools.SnakeUtilKit;
+import com.snake.api.apptools.LogTool;
+import com.snake.api.apptools.SnakeUtilKit;
 import com.snake.kit.controllers.MessageController;
 import com.snake.kit.controllers.MucController;
 import com.snake.kit.controllers.PublicController;

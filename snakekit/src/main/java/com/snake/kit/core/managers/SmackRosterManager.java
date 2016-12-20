@@ -3,7 +3,7 @@ package com.snake.kit.core.managers;
 import android.content.Context;
 import android.util.SparseArray;
 
-import com.snake.kit.apptools.LogTool;
+import com.snake.api.apptools.LogTool;
 import com.snake.kit.core.mngservices.IRosterManager;
 
 import org.jivesoftware.smack.AbstractXMPPConnection;

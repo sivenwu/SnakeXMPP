@@ -1,8 +1,9 @@
-package com.snake.kit.apptools;
+package com.snake.api.apptools;
 
 import android.app.Application;
 
-import com.snake.kit.core.data.SnakeConstants;
+import com.snake.api.data.SnakeConstants;
+
 
 /**
  * Created by Yuan on 2016/11/4.

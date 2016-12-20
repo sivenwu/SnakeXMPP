@@ -1,7 +1,7 @@
 package com.snake.kit.apptools;
 
 
-import com.snake.kit.core.data.MessageModel;
+import com.snake.api.data.MessageModel;
 
 import org.jivesoftware.smack.packet.Message;
 
@@ -30,7 +30,7 @@ public class MessageDealUtil {
     private static final String INPUTING = "INPUTING";
     private static final String COMMON = "COMMON";
 
-    public static  MessageModel dealMessage(Message message){
+    public static MessageModel dealMessage(Message message){
         Message.Type type = message.getType();
 
         MessageModel realMsg = new MessageModel();

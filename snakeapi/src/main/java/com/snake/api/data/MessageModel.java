@@ -1,4 +1,4 @@
-package com.snake.kit.core.data;
+package com.snake.api.data;
 
 import android.os.Parcel;
 import android.os.Parcelable;

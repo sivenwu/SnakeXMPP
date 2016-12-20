@@ -1,4 +1,4 @@
-package com.snake.kit.exceptions;
+package com.snake.api.exceptions;
 
 /**
  * Created by Yuan on 2016/11/4.

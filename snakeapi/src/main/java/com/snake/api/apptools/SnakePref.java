@@ -1,11 +1,12 @@
-package com.snake.kit.apptools;
+package com.snake.api.apptools;
 
 import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import com.snake.kit.exceptions.SnakeRuntimeException;
+import com.snake.api.exceptions.SnakeRuntimeException;
+
 
 /**
  * Created by Yuan on 2016/11/4.
