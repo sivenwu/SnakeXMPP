@@ -70,6 +70,16 @@ public class SnakeKit extends Observable {
         notifyObservers(obj);
     }
 
+    public void restartSnakeService(){
+
+        LogTool.d("重新启动服务..");
+
+        Application application = SnakeUtilKit.getSnakeApp();
+        application.startService(new Intent(application, SnakeService.class));
+        application.bindService(new Intent(application, SnakeService.class),
+                mServiceConnection, Context.BIND_AUTO_CREATE);
+    }
+
     private void startSnakeService(Application application) {
         application.startService(new Intent(application, SnakeService.class));
         application.bindService(new Intent(application, SnakeService.class),

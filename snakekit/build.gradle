@@ -33,6 +33,9 @@ dependencies {
 
     // eventbus
     //    compile 'de.greenrobot:eventbus:3.0.0-beta1'
+
+    // my lib for test
     compile project(':snakeapi')
+    compile project(':dbkit')
 }
 

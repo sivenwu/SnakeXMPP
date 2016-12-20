@@ -12,6 +12,7 @@ import com.snake.api.data.SnakeConstants;
 import com.snake.kit.core.managers.PingPongManager;
 import com.snake.kit.core.managers.SmackMessageManager;
 import com.snake.kit.core.managers.SmackMucManager;
+import com.snake.kit.core.managers.SmackOnselfManager;
 import com.snake.kit.core.managers.SmackRosterManager;
 import com.snake.kit.core.managers.SmackSessionManager;
 import com.snake.kit.interfaces.XmppLoginListener;
@@ -47,12 +48,16 @@ public class SnakeService extends Service {
     private SmackRosterManager rosterManager;
     private PingPongManager pingPongManager;
     private SmackSessionManager sessionManager;
+    private SmackOnselfManager onselfManager;
 
     // User
     private String login;
     private String password;
     private String server;
     private int port;
+
+    // flag
+    private boolean isExcuLogin = false;//是否已经执行登录（非是否登录成功） 为服务是否连接判定
 
     // listener
     private XmppLoginListener xmppLoginListener;
@@ -100,19 +105,43 @@ public class SnakeService extends Service {
     public void login(String userName, String password, XmppLoginListener xmppLoginListener) {
         this.xmppLoginListener = xmppLoginListener;
         if (mConnection != null) {
-            try {
-                mConnection.login(userName, password);
-            } catch (Exception e) {
-                this.xmppLoginListener.onError(e, e.getMessage().toLowerCase());
-                e.printStackTrace();
+            if (mConnection.isConnected()) {
+                try {
+                    isExcuLogin = true;
+                    onselfManager.login(userName, password);
+                } catch (Exception e) {
+                    this.xmppLoginListener.onError(e, e.getMessage().toLowerCase());
+                    e.printStackTrace();
+                }
+            }else{
+                try {
+                    isExcuLogin = false;
+                    mConnection.connect();
+                } catch (Exception e) {
+                    this.xmppLoginListener.onError(e, e.getMessage().toLowerCase());
+                    e.printStackTrace();
+                }
             }
+        }else{
+            // 如果服务没有启动则启动连接
+//            justConnect();
         }
     }
 
     // 注销登录
     public void logout() {
-        LogTool.e("logout");
+        isExcuLogin = false;
+        onselfManager.logout();
     }
+
+    // 断开连接
+    public void disConnect() {
+        isExcuLogin = false;
+        if (mConnection != null) {
+            mConnection.disconnect();
+        }
+    }
+
 
     /**
      * 好友管理调用方法
@@ -193,6 +222,14 @@ public class SnakeService extends Service {
                 public void connected(XMPPConnection connection) {
                     LogTool.d("connected");
                     mConnection = (AbstractXMPPConnection) connection;
+
+                    if (!isExcuLogin){// 如果没有执行登录，则进行登录操作
+                        try {
+                            onselfManager.login();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
                 }
 
                 @Override
@@ -240,19 +277,13 @@ public class SnakeService extends Service {
         }
     }
 
-    public void disConnect() {
-        if (mConnection != null) {
-            mConnection.disconnect();
-        }
-    }
-
-
     private void initManager() {
         messageManager = new SmackMessageManager(this, mConnection);
         mucManager = new SmackMucManager(this, mConnection);
         rosterManager = new SmackRosterManager(this, mConnection);
         pingPongManager = new PingPongManager(this, mConnection);
         sessionManager = new SmackSessionManager(this, mConnection);
+        onselfManager = new SmackOnselfManager(this, mConnection);
     }
 
     private void registerManagerService() {
