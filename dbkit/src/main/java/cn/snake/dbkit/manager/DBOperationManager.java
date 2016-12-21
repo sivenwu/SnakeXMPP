@@ -1,5 +1,7 @@
 package cn.snake.dbkit.manager;
 
+import com.snake.api.exceptions.SnakeRuntimeException;
+
 import java.util.List;
 
 import cn.snake.dbkit.DBHelper;
@@ -67,20 +69,16 @@ public class DBOperationManager {
     }
 
     /**
-     * query chatinfo datas from db
-     *
+     * query datas from db
+     * @param obj
+     * @param <T>
      * @return
      */
-    public List<ChatInfoModel> queryChatInfoLists() {
-        return DBHelper.getDaoSession().getChatInfoModelDao().queryBuilder().list();
-    }
-
-    /**
-     * query contact datas from db
-     *
-     * @return
-     */
-    public List<ContactModel> queryContactLists() {
-        return DBHelper.getDaoSession().getContactModelDao().queryBuilder().list();
+    public <T extends Object> List<T> queryList(Object obj) {
+        if (obj instanceof ChatInfoModel)
+            return (List<T>) DBHelper.getDaoSession().getChatInfoModelDao().queryBuilder().list();
+        else if (obj instanceof ContactModel)
+            return (List<T>) DBHelper.getDaoSession().getContactModelDao().queryBuilder().list();
+        else throw new SnakeRuntimeException("The current object does not exist");
     }
 }

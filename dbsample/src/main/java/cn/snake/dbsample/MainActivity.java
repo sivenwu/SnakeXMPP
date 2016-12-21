@@ -33,7 +33,7 @@ public class MainActivity extends AppCompatActivity {
         queryBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                List<ChatInfoModel> list = DBOperationManager.get().queryChatInfoLists();
+                List<ChatInfoModel> list = DBOperationManager.get().queryList(new ChatInfoModel());
                 if (list.size() == 0) Toast.makeText(MainActivity.this, "请先添加数据",
                         Toast.LENGTH_LONG).show();
                 Toast.makeText(MainActivity.this, list.get(list.size() - 1).getJid(),
