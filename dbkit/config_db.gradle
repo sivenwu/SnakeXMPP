@@ -3,7 +3,7 @@ apply plugin: 'org.greenrobot.greendao'
 //config greedao
 greendao {
     schemaVersion 1
-    daoPackage 'cn.snake.dbkit.data'
+    daoPackage 'cn.snake.dbkit.dao'
     targetGenDir 'src/main/java'
 }
 

@@ -15,7 +15,7 @@ import cn.snake.dbkit.bean.ChatInfoModel;
 /** 
  * DAO for table "CHAT_INFO_MODEL".
 */
-public class ChatInfoModelDao extends AbstractDao<ChatInfoModel, Void> {
+public class ChatInfoModelDao extends AbstractDao<ChatInfoModel, Long> {
 
     public static final String TABLENAME = "CHAT_INFO_MODEL";
 
@@ -24,13 +24,15 @@ public class ChatInfoModelDao extends AbstractDao<ChatInfoModel, Void> {
      * Can be used for QueryBuilder and for referencing column names.
      */
     public static class Properties {
-        public final static Property Jid = new Property(0, String.class, "jid", false, "JID");
-        public final static Property Type = new Property(1, String.class, "type", false, "TYPE");
-        public final static Property To = new Property(2, String.class, "to", false, "TO");
-        public final static Property From = new Property(3, String.class, "from", false, "FROM");
-        public final static Property Body = new Property(4, String.class, "body", false, "BODY");
-        public final static Property Thread = new Property(5, String.class, "thread", false, "THREAD");
-        public final static Property State = new Property(6, String.class, "state", false, "STATE");
+        public final static Property _id = new Property(0, Long.class, "_id", true, "_id");
+        public final static Property UserId = new Property(1, String.class, "userId", false, "USER_ID");
+        public final static Property Jid = new Property(2, String.class, "jid", false, "JID");
+        public final static Property Type = new Property(3, String.class, "type", false, "TYPE");
+        public final static Property To = new Property(4, String.class, "to", false, "TO");
+        public final static Property From = new Property(5, String.class, "from", false, "FROM");
+        public final static Property Message = new Property(6, String.class, "message", false, "MESSAGE");
+        public final static Property State = new Property(7, String.class, "state", false, "STATE");
+        public final static Property MessageStatus = new Property(8, String.class, "messageStatus", false, "MESSAGE_STATUS");
     }
 
 
@@ -46,13 +48,15 @@ public class ChatInfoModelDao extends AbstractDao<ChatInfoModel, Void> {
     public static void createTable(Database db, boolean ifNotExists) {
         String constraint = ifNotExists? "IF NOT EXISTS ": "";
         db.execSQL("CREATE TABLE " + constraint + "\"CHAT_INFO_MODEL\" (" + //
-                "\"JID\" TEXT," + // 0: jid
-                "\"TYPE\" TEXT," + // 1: type
-                "\"TO\" TEXT," + // 2: to
-                "\"FROM\" TEXT," + // 3: from
-                "\"BODY\" TEXT," + // 4: body
-                "\"THREAD\" TEXT," + // 5: thread
-                "\"STATE\" TEXT);"); // 6: state
+                "\"_id\" INTEGER PRIMARY KEY AUTOINCREMENT ," + // 0: _id
+                "\"USER_ID\" TEXT," + // 1: userId
+                "\"JID\" TEXT," + // 2: jid
+                "\"TYPE\" TEXT," + // 3: type
+                "\"TO\" TEXT," + // 4: to
+                "\"FROM\" TEXT," + // 5: from
+                "\"MESSAGE\" TEXT," + // 6: message
+                "\"STATE\" TEXT," + // 7: state
+                "\"MESSAGE_STATUS\" TEXT);"); // 8: messageStatus
     }
 
     /** Drops the underlying database table. */
@@ -65,39 +69,49 @@ public class ChatInfoModelDao extends AbstractDao<ChatInfoModel, Void> {
     protected final void bindValues(DatabaseStatement stmt, ChatInfoModel entity) {
         stmt.clearBindings();
  
+        Long _id = entity.get_id();
+        if (_id != null) {
+            stmt.bindLong(1, _id);
+        }
+ 
+        String userId = entity.getUserId();
+        if (userId != null) {
+            stmt.bindString(2, userId);
+        }
+ 
         String jid = entity.getJid();
         if (jid != null) {
-            stmt.bindString(1, jid);
+            stmt.bindString(3, jid);
         }
  
         String type = entity.getType();
         if (type != null) {
-            stmt.bindString(2, type);
+            stmt.bindString(4, type);
         }
  
         String to = entity.getTo();
         if (to != null) {
-            stmt.bindString(3, to);
+            stmt.bindString(5, to);
         }
  
         String from = entity.getFrom();
         if (from != null) {
-            stmt.bindString(4, from);
+            stmt.bindString(6, from);
         }
  
-        String body = entity.getBody();
-        if (body != null) {
-            stmt.bindString(5, body);
-        }
- 
-        String thread = entity.getThread();
-        if (thread != null) {
-            stmt.bindString(6, thread);
+        String message = entity.getMessage();
+        if (message != null) {
+            stmt.bindString(7, message);
         }
  
         String state = entity.getState();
         if (state != null) {
-            stmt.bindString(7, state);
+            stmt.bindString(8, state);
+        }
+ 
+        String messageStatus = entity.getMessageStatus();
+        if (messageStatus != null) {
+            stmt.bindString(9, messageStatus);
         }
     }
 
@@ -105,87 +119,104 @@ public class ChatInfoModelDao extends AbstractDao<ChatInfoModel, Void> {
     protected final void bindValues(SQLiteStatement stmt, ChatInfoModel entity) {
         stmt.clearBindings();
  
+        Long _id = entity.get_id();
+        if (_id != null) {
+            stmt.bindLong(1, _id);
+        }
+ 
+        String userId = entity.getUserId();
+        if (userId != null) {
+            stmt.bindString(2, userId);
+        }
+ 
         String jid = entity.getJid();
         if (jid != null) {
-            stmt.bindString(1, jid);
+            stmt.bindString(3, jid);
         }
  
         String type = entity.getType();
         if (type != null) {
-            stmt.bindString(2, type);
+            stmt.bindString(4, type);
         }
  
         String to = entity.getTo();
         if (to != null) {
-            stmt.bindString(3, to);
+            stmt.bindString(5, to);
         }
  
         String from = entity.getFrom();
         if (from != null) {
-            stmt.bindString(4, from);
+            stmt.bindString(6, from);
         }
  
-        String body = entity.getBody();
-        if (body != null) {
-            stmt.bindString(5, body);
-        }
- 
-        String thread = entity.getThread();
-        if (thread != null) {
-            stmt.bindString(6, thread);
+        String message = entity.getMessage();
+        if (message != null) {
+            stmt.bindString(7, message);
         }
  
         String state = entity.getState();
         if (state != null) {
-            stmt.bindString(7, state);
+            stmt.bindString(8, state);
+        }
+ 
+        String messageStatus = entity.getMessageStatus();
+        if (messageStatus != null) {
+            stmt.bindString(9, messageStatus);
         }
     }
 
     @Override
-    public Void readKey(Cursor cursor, int offset) {
-        return null;
+    public Long readKey(Cursor cursor, int offset) {
+        return cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0);
     }    
 
     @Override
     public ChatInfoModel readEntity(Cursor cursor, int offset) {
         ChatInfoModel entity = new ChatInfoModel( //
-            cursor.isNull(offset + 0) ? null : cursor.getString(offset + 0), // jid
-            cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1), // type
-            cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2), // to
-            cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3), // from
-            cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4), // body
-            cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5), // thread
-            cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6) // state
+            cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0), // _id
+            cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1), // userId
+            cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2), // jid
+            cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3), // type
+            cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4), // to
+            cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5), // from
+            cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6), // message
+            cursor.isNull(offset + 7) ? null : cursor.getString(offset + 7), // state
+            cursor.isNull(offset + 8) ? null : cursor.getString(offset + 8) // messageStatus
         );
         return entity;
     }
      
     @Override
     public void readEntity(Cursor cursor, ChatInfoModel entity, int offset) {
-        entity.setJid(cursor.isNull(offset + 0) ? null : cursor.getString(offset + 0));
-        entity.setType(cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1));
-        entity.setTo(cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2));
-        entity.setFrom(cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3));
-        entity.setBody(cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4));
-        entity.setThread(cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5));
-        entity.setState(cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6));
+        entity.set_id(cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0));
+        entity.setUserId(cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1));
+        entity.setJid(cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2));
+        entity.setType(cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3));
+        entity.setTo(cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4));
+        entity.setFrom(cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5));
+        entity.setMessage(cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6));
+        entity.setState(cursor.isNull(offset + 7) ? null : cursor.getString(offset + 7));
+        entity.setMessageStatus(cursor.isNull(offset + 8) ? null : cursor.getString(offset + 8));
      }
     
     @Override
-    protected final Void updateKeyAfterInsert(ChatInfoModel entity, long rowId) {
-        // Unsupported or missing PK type
-        return null;
+    protected final Long updateKeyAfterInsert(ChatInfoModel entity, long rowId) {
+        entity.set_id(rowId);
+        return rowId;
     }
     
     @Override
-    public Void getKey(ChatInfoModel entity) {
-        return null;
+    public Long getKey(ChatInfoModel entity) {
+        if(entity != null) {
+            return entity.get_id();
+        } else {
+            return null;
+        }
     }
 
     @Override
     public boolean hasKey(ChatInfoModel entity) {
-        // TODO
-        return false;
+        return entity.get_id() != null;
     }
 
     @Override
