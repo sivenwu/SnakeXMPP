@@ -4,8 +4,8 @@ import android.app.Application;
 
 import org.greenrobot.greendao.database.Database;
 
-import cn.snake.dbkit.data.DaoMaster;
-import cn.snake.dbkit.data.DaoSession;
+import cn.snake.dbkit.dao.DaoMaster;
+import cn.snake.dbkit.dao.DaoSession;
 
 /**
  * Created by chenyk on 2016/12/15.
@@ -24,7 +24,7 @@ public class DBHelper {
 
     private DBHelper(Application application, String dbName, boolean isEncryption) {
         DaoMaster.DevOpenHelper helper = new DaoMaster.DevOpenHelper(application,
-                isEncryption ? dbName + "-db-encrypted" : dbName + "-db");
+                isEncryption ? dbName + "-db-encrypted" : dbName + ".db");
         Database db = isEncryption ? helper.getEncryptedWritableDb(
                 "super-secret") : helper.getWritableDb();
         if (DB_NAME.equals(dbName))
