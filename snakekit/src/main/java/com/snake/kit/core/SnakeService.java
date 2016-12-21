@@ -9,12 +9,13 @@ import android.support.annotation.Nullable;
 import com.snake.api.apptools.LogTool;
 import com.snake.api.apptools.SnakePref;
 import com.snake.api.data.SnakeConstants;
+import com.snake.kit.SnakeKit;
 import com.snake.kit.core.managers.PingPongManager;
-import com.snake.kit.core.managers.SmackMessageManager;
 import com.snake.kit.core.managers.SmackMucManager;
 import com.snake.kit.core.managers.SmackOnselfManager;
 import com.snake.kit.core.managers.SmackRosterManager;
 import com.snake.kit.core.managers.SmackSessionManager;
+import com.snake.kit.interfaces.ChatMessageListener;
 import com.snake.kit.interfaces.XmppLoginListener;
 
 import org.jivesoftware.smack.AbstractXMPPConnection;
@@ -23,6 +24,8 @@ import org.jivesoftware.smack.ConnectionListener;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.chat.Chat;
+import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.roster.Roster;
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smack.tcp.XMPPTCPConnectionConfiguration;
@@ -43,7 +46,6 @@ public class SnakeService extends Service {
 
     //xmpp
     private volatile AbstractXMPPConnection mConnection;
-    private SmackMessageManager messageManager;
     private SmackMucManager mucManager;
     private SmackRosterManager rosterManager;
     private PingPongManager pingPongManager;
@@ -84,6 +86,8 @@ public class SnakeService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        // TODO: 2016/12/20   重启？ 
+        SnakeKit.getKit().restartSnakeService();
     }
 
     // binder for snackService
@@ -142,6 +146,15 @@ public class SnakeService extends Service {
         }
     }
 
+    // 注册用户
+    public void registerUser(String account, String password){
+        onselfManager.registerUser(account,password);
+    }
+
+    // 修改密码
+    public void modifyPassword(){
+        onselfManager.modifyPassword();
+    }
 
     /**
      * 好友管理调用方法
@@ -181,6 +194,28 @@ public class SnakeService extends Service {
 
     public void deleteGroup(String groupName) {
         rosterManager.deleteGroup(groupName);
+    }
+
+    /**
+     * 会话管理调用方法
+     *****************************************************************************/
+
+    // 创建一个聊天会话
+    public Chat createChat(String userJid){
+        return sessionManager.createChat(userJid);
+    }
+
+    public Chat createChat(String userJid,ChatMessageListener listener){
+        return sessionManager.createChat(userJid,listener);
+    }
+
+    // 发送消息
+    public void sendMessage(String userJid,String message){
+        sessionManager.sendMessage(userJid,message);
+    }
+
+    public void sendMessage(String userJid,Message message){
+        sessionManager.sendMessage(userJid,message);
     }
 
     //----------------------------------------------------------------------------------------------
@@ -278,7 +313,6 @@ public class SnakeService extends Service {
     }
 
     private void initManager() {
-        messageManager = new SmackMessageManager(this, mConnection);
         mucManager = new SmackMucManager(this, mConnection);
         rosterManager = new SmackRosterManager(this, mConnection);
         pingPongManager = new PingPongManager(this, mConnection);

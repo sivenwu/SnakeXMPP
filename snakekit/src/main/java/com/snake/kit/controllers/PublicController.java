@@ -15,4 +15,28 @@ public class PublicController extends APPController {
         }
         getmSnakeService().login(uesrName,password,xmppLoginListener);
     }
+
+    // 登出
+    public void logout(){
+        if (!isRunning()){
+            return ;
+        }
+        getmSnakeService().logout();
+    }
+
+    // 注册用户
+    public void registerUser(String account, String password){
+        if (!isRunning()){
+            return ;
+        }
+        getmSnakeService().registerUser(account,password);
+    }
+
+    // 修改登录密码
+    public void modifyPassword(){
+        if (!isRunning()){
+            return ;
+        }
+        getmSnakeService().modifyPassword();
+    }
 }

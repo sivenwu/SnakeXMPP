@@ -1,108 +1,97 @@
 package com.snake.kit.core.managers;
 
 import android.content.Context;
-import android.content.Intent;
-import android.os.Bundle;
-import android.util.SparseArray;
+import android.util.ArrayMap;
 
-import com.snake.api.apptools.SnakeUtilKit;
-import com.snake.api.data.MessageModel;
-import com.snake.kit.apptools.MessageDealUtil;
 import com.snake.kit.core.mngservices.ISessionManager;
-import com.snake.kit.core.receivers.MessageReceiver;
 
 import org.jivesoftware.smack.AbstractXMPPConnection;
-import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.chat.Chat;
 import org.jivesoftware.smack.chat.ChatManager;
-import org.jivesoftware.smack.chat.ChatManagerListener;
-import org.jivesoftware.smack.chat.ChatMessageListener;
 import org.jivesoftware.smack.packet.Message;
+
+import java.util.Map;
 
 /**
  * Created by Yuan on 2016/11/11.
  * Detail 会话管理
  */
 
-public class SmackSessionManager extends BaseManager implements ISessionManager,ChatManagerListener,ChatMessageListener{
+public class SmackSessionManager extends BaseManager implements ISessionManager{
+
+    private SmackMessageManager mSmackMessageManager;
 
     private ChatManager mChatManager;
-    private SparseArray mSparseArray;
+    private Map<String,Object> mCurChatMap;
+//    private SparseArray mSparseArray;
 
     public SmackSessionManager(Context context, AbstractXMPPConnection mConnection) {
         super(context, mConnection);
 
         mChatManager = ChatManager.getInstanceFor(mConnection);
-        mSparseArray = new SparseArray();
+        mCurChatMap = new ArrayMap<>();
+//        mSparseArray = new SparseArray();
+        mSmackMessageManager = new SmackMessageManager(mChatManager);
 
-        registerListenter();
-    }
-
-    private void registerListenter(){
-        if (mChatManager != null)
-            mChatManager.addChatListener(this);
-    }
-
-    @Override
-    public void chatCreated(Chat chat, boolean createdLocally) {
-        chat.addMessageListener(this);
-    }
-
-    @Override
-    public void processMessage(Chat chat, Message message) {
-        MessageModel msg = MessageDealUtil.dealMessage(message);
-
-        if (msg.getBody() != null) {
-            Intent intent = new Intent();
-            Bundle bundle = new Bundle();
-            bundle.putParcelable("message", msg);
-
-            intent.putExtras(bundle);
-            intent.setAction(MessageReceiver.SNAKE_MESSAGE_ACTION);
-            SnakeUtilKit.getSnakeApp().sendBroadcast(intent);
-        }
+        mSmackMessageManager.registerListenter();
     }
 
     @Override
     public Chat createChat(String userJid) {
 
-        Chat curChat = mChatManager.createChat(userJid);
-        // 存储数据库
-//        mSparseArray.put(userJid,curChat);
+        Chat curChat = null;
+        if (mCurChatMap.containsKey(userJid)){
+            curChat = (Chat) mCurChatMap.get(userJid);
 
-        return mChatManager.createChat(userJid);
+            if (curChat != null){ return curChat; }
+        }
+
+        curChat = mChatManager.createChat(userJid);
+        mCurChatMap.put(userJid,curChat);
+
+        return curChat;
     }
 
     @Override
     public Chat createChat(String userJid, final com.snake.kit.interfaces.ChatMessageListener listener) {
-        return mChatManager.createChat(userJid, new ChatMessageListener() {
-            @Override
-            public void processMessage(Chat chat, Message message) {
-                MessageModel msg = MessageDealUtil.dealMessage(message);
 
-                if (msg.getBody() != null) {
-                    listener.onRecevie(msg,message.getBody());
-                }
+        mSmackMessageManager.setListener(listener);
+
+        Chat curChat = null;
+        if (mCurChatMap.containsKey(userJid)){
+            curChat = (Chat) mCurChatMap.get(userJid);
+
+            if (curChat != null){
+                return curChat;
             }
-        });
+        }
+
+        curChat = mChatManager.createChat(userJid);
+        mCurChatMap.put(userJid,curChat);
+
+        return curChat;
     }
 
     @Override
-    public void sendMessage(Chat chat, String message) {
-        try {
-            chat.sendMessage(message);
-        } catch (SmackException.NotConnectedException e) {
-            e.printStackTrace();
+    public void sendMessage(String userJid, String message) {
+        Chat curChat = (Chat) mCurChatMap.get(userJid);
+
+        if (curChat == null){
+            curChat = createChat(userJid);
         }
+
+        mSmackMessageManager.sendMessage(curChat,message);
     }
 
     @Override
-    public void sendMessage(Chat chat, Message message) {
-        try {
-            chat.sendMessage(message);
-        } catch (SmackException.NotConnectedException e) {
-            e.printStackTrace();
+    public void sendMessage(String userJid, Message message) {
+        Chat curChat = (Chat) mCurChatMap.get(userJid);
+
+        if (curChat == null){
+            curChat = createChat(userJid);
         }
+
+        mSmackMessageManager.sendMessage(curChat,message);
     }
 
 

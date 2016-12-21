@@ -23,9 +23,9 @@ dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:23.1.1'
-//        compile project(':snakekit')
-    //    compile project(':dbkit')
-    compile files('libs/dblib.jar')
-    compile files('libs/snake.jar')
-    compile files('libs/snakeapi.jar')
+    compile project(':snakekit')
+//    //    compile project(':dbkit')
+//    compile files('libs/dblib.jar')
+////    compile files('libs/snake.jar')
+//    compile files('libs/snakeapi.jar')
 }

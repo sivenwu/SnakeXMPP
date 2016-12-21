@@ -9,7 +9,6 @@ import android.os.IBinder;
 
 import com.snake.api.apptools.LogTool;
 import com.snake.api.apptools.SnakeUtilKit;
-import com.snake.kit.controllers.MessageController;
 import com.snake.kit.controllers.MucController;
 import com.snake.kit.controllers.PublicController;
 import com.snake.kit.controllers.RosterController;
@@ -88,7 +87,6 @@ public class SnakeKit extends Observable {
 
     private void registerAppControllers() {
         addObserver(new PublicController());
-        addObserver(new MessageController());
         addObserver(new MucController());
         addObserver(new RosterController());
         addObserver(new SessionController());

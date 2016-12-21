@@ -18,9 +18,9 @@ public interface ISessionManager {
     public Chat createChat(String userJid,ChatMessageListener listener);
 
     // 发送消息
-    public void sendMessage(Chat chat,String message);
+    public void sendMessage(String userJid,String message);
 
-    public void sendMessage(Chat chat,Message message);
+    public void sendMessage(String userJid,Message message);
 
     // 接收消息
     public void receiveMessage();

@@ -1,9 +1,17 @@
 package com.sanke.sample;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.TextView;
 
+import com.snake.api.apptools.LogTool;
+import com.snake.api.data.MessageModel;
 import com.snake.kit.controllers.RosterController;
+import com.snake.kit.controllers.SessionController;
+import com.snake.kit.interfaces.ChatMessageListener;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -11,6 +19,19 @@ public class MainActivity extends AppCompatActivity {
     private String url = "192.168.244.6";
     private String name = "siven02";
     private String password = "123";
+
+    private TextView mainTv;
+    private String getMessage;
+
+    public  Handler handler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            if (msg.what == 1000){
+                mainTv.setText(getMessage);
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,6 +43,28 @@ public class MainActivity extends AppCompatActivity {
 
         // 测试加好友
 //        RosterController.addRoster("wusy@siven-pc","wusy","group");
+        mainTv = (TextView) findViewById(R.id.main_tv);
+
+        findViewById(R.id.send_btn).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SessionController.sendMessage("wusy@siven-pc","hi 来自客户端消息");
+            }
+        });
+
+        createChat();
+    }
+
+    private void createChat(){
+        if (SessionController.createChat("wusy@siven-pc", new ChatMessageListener() {
+            @Override
+            public void onRecevie(MessageModel model, String message) {
+                getMessage = getMessage + message + "\n";
+                handler.sendEmptyMessage(1000);
+            }
+        })){
+            LogTool.i("创建聊天会话成功！");
+        }
 
     }
 
