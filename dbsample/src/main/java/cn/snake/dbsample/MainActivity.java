@@ -6,10 +6,13 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.snake.api.apptools.SnakeGsonUtil;
+
 import java.util.List;
 import java.util.UUID;
 
 import cn.snake.dbkit.bean.ChatInfoModel;
+import cn.snake.dbkit.bean.MemberInfo;
 import cn.snake.dbkit.manager.DBOperationManager;
 
 public class MainActivity extends AppCompatActivity {
@@ -24,7 +27,11 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 ChatInfoModel model = new ChatInfoModel();
-                model.setJid("chenyk_" + UUID.randomUUID().toString().substring(0, 5));
+                MemberInfo modeld = new MemberInfo();
+                model.setUserId("chenyk");
+                model.setJid("testJid");
+                model.setGroupId(8888);
+                model.setMessage("message" + UUID.randomUUID().toString().substring(0, 5));
                 DBOperationManager.get().insert(model);
             }
         });
@@ -33,10 +40,12 @@ public class MainActivity extends AppCompatActivity {
         queryBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                List<ChatInfoModel> list = DBOperationManager.get().queryList(new ChatInfoModel());
-                if (list.size() == 0) Toast.makeText(MainActivity.this, "请先添加数据",
-                        Toast.LENGTH_LONG).show();
-                Toast.makeText(MainActivity.this, list.get(list.size() - 1).getJid(),
+                List<ChatInfoModel> list = DBOperationManager.get().getGroupChatList("8888");
+                if (list.size() == 0) {
+                    Toast.makeText(MainActivity.this, "请先添加数据", Toast.LENGTH_LONG).show();
+                    return;
+                }
+                Toast.makeText(MainActivity.this, SnakeGsonUtil.bean2json(list),
                         Toast.LENGTH_LONG).show();
             }
         });

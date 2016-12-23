@@ -6,32 +6,37 @@ import org.greenrobot.greendao.annotation.Generated;
 
 /**
  * Created by chenyk on 2016/12/20.
+ * 对聊和群聊共用
  */
 @Entity
 public class ContactModel {
     @Id(autoincrement = true)
     public Long _id;
     public String userId;
+    public int groupId;//群id
+    public String groupName;//群名称
+    public String groupHeadPicUrl;//群头像
     public String jid;
     public String userName;
     public String lastMessage;
     public long lastTime;
     public String headPicUrl;
     public String mobile;
-    public int newMessageCounts = 0;
-    @Generated(hash = 423344210)
-    public ContactModel(Long _id, String userId, String jid, String userName,
-            String lastMessage, long lastTime, String headPicUrl, String mobile,
-            int newMessageCounts) {
+    @Generated(hash = 196618442)
+    public ContactModel(Long _id, String userId, int groupId, String groupName,
+            String groupHeadPicUrl, String jid, String userName, String lastMessage,
+            long lastTime, String headPicUrl, String mobile) {
         this._id = _id;
         this.userId = userId;
+        this.groupId = groupId;
+        this.groupName = groupName;
+        this.groupHeadPicUrl = groupHeadPicUrl;
         this.jid = jid;
         this.userName = userName;
         this.lastMessage = lastMessage;
         this.lastTime = lastTime;
         this.headPicUrl = headPicUrl;
         this.mobile = mobile;
-        this.newMessageCounts = newMessageCounts;
     }
     @Generated(hash = 1326690138)
     public ContactModel() {
@@ -84,11 +89,23 @@ public class ContactModel {
     public void setMobile(String mobile) {
         this.mobile = mobile;
     }
-    public int getNewMessageCounts() {
-        return this.newMessageCounts;
+    public int getGroupId() {
+        return this.groupId;
     }
-    public void setNewMessageCounts(int newMessageCounts) {
-        this.newMessageCounts = newMessageCounts;
+    public void setGroupId(int groupId) {
+        this.groupId = groupId;
+    }
+    public String getGroupName() {
+        return this.groupName;
+    }
+    public void setGroupName(String groupName) {
+        this.groupName = groupName;
+    }
+    public String getGroupHeadPicUrl() {
+        return this.groupHeadPicUrl;
+    }
+    public void setGroupHeadPicUrl(String groupHeadPicUrl) {
+        this.groupHeadPicUrl = groupHeadPicUrl;
     }
 
 }
