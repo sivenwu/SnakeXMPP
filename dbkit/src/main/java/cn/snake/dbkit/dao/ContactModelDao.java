@@ -26,13 +26,15 @@ public class ContactModelDao extends AbstractDao<ContactModel, Long> {
     public static class Properties {
         public final static Property _id = new Property(0, Long.class, "_id", true, "_id");
         public final static Property UserId = new Property(1, String.class, "userId", false, "USER_ID");
-        public final static Property Jid = new Property(2, String.class, "jid", false, "JID");
-        public final static Property UserName = new Property(3, String.class, "userName", false, "USER_NAME");
-        public final static Property LastMessage = new Property(4, String.class, "lastMessage", false, "LAST_MESSAGE");
-        public final static Property LastTime = new Property(5, long.class, "lastTime", false, "LAST_TIME");
-        public final static Property HeadPicUrl = new Property(6, String.class, "headPicUrl", false, "HEAD_PIC_URL");
-        public final static Property Mobile = new Property(7, String.class, "mobile", false, "MOBILE");
-        public final static Property NewMessageCounts = new Property(8, int.class, "newMessageCounts", false, "NEW_MESSAGE_COUNTS");
+        public final static Property GroupId = new Property(2, int.class, "groupId", false, "GROUP_ID");
+        public final static Property GroupName = new Property(3, String.class, "groupName", false, "GROUP_NAME");
+        public final static Property GroupHeadPicUrl = new Property(4, String.class, "groupHeadPicUrl", false, "GROUP_HEAD_PIC_URL");
+        public final static Property Jid = new Property(5, String.class, "jid", false, "JID");
+        public final static Property UserName = new Property(6, String.class, "userName", false, "USER_NAME");
+        public final static Property LastMessage = new Property(7, String.class, "lastMessage", false, "LAST_MESSAGE");
+        public final static Property LastTime = new Property(8, long.class, "lastTime", false, "LAST_TIME");
+        public final static Property HeadPicUrl = new Property(9, String.class, "headPicUrl", false, "HEAD_PIC_URL");
+        public final static Property Mobile = new Property(10, String.class, "mobile", false, "MOBILE");
     }
 
 
@@ -50,13 +52,15 @@ public class ContactModelDao extends AbstractDao<ContactModel, Long> {
         db.execSQL("CREATE TABLE " + constraint + "\"CONTACT_MODEL\" (" + //
                 "\"_id\" INTEGER PRIMARY KEY AUTOINCREMENT ," + // 0: _id
                 "\"USER_ID\" TEXT," + // 1: userId
-                "\"JID\" TEXT," + // 2: jid
-                "\"USER_NAME\" TEXT," + // 3: userName
-                "\"LAST_MESSAGE\" TEXT," + // 4: lastMessage
-                "\"LAST_TIME\" INTEGER NOT NULL ," + // 5: lastTime
-                "\"HEAD_PIC_URL\" TEXT," + // 6: headPicUrl
-                "\"MOBILE\" TEXT," + // 7: mobile
-                "\"NEW_MESSAGE_COUNTS\" INTEGER NOT NULL );"); // 8: newMessageCounts
+                "\"GROUP_ID\" INTEGER NOT NULL ," + // 2: groupId
+                "\"GROUP_NAME\" TEXT," + // 3: groupName
+                "\"GROUP_HEAD_PIC_URL\" TEXT," + // 4: groupHeadPicUrl
+                "\"JID\" TEXT," + // 5: jid
+                "\"USER_NAME\" TEXT," + // 6: userName
+                "\"LAST_MESSAGE\" TEXT," + // 7: lastMessage
+                "\"LAST_TIME\" INTEGER NOT NULL ," + // 8: lastTime
+                "\"HEAD_PIC_URL\" TEXT," + // 9: headPicUrl
+                "\"MOBILE\" TEXT);"); // 10: mobile
     }
 
     /** Drops the underlying database table. */
@@ -78,33 +82,43 @@ public class ContactModelDao extends AbstractDao<ContactModel, Long> {
         if (userId != null) {
             stmt.bindString(2, userId);
         }
+        stmt.bindLong(3, entity.getGroupId());
+ 
+        String groupName = entity.getGroupName();
+        if (groupName != null) {
+            stmt.bindString(4, groupName);
+        }
+ 
+        String groupHeadPicUrl = entity.getGroupHeadPicUrl();
+        if (groupHeadPicUrl != null) {
+            stmt.bindString(5, groupHeadPicUrl);
+        }
  
         String jid = entity.getJid();
         if (jid != null) {
-            stmt.bindString(3, jid);
+            stmt.bindString(6, jid);
         }
  
         String userName = entity.getUserName();
         if (userName != null) {
-            stmt.bindString(4, userName);
+            stmt.bindString(7, userName);
         }
  
         String lastMessage = entity.getLastMessage();
         if (lastMessage != null) {
-            stmt.bindString(5, lastMessage);
+            stmt.bindString(8, lastMessage);
         }
-        stmt.bindLong(6, entity.getLastTime());
+        stmt.bindLong(9, entity.getLastTime());
  
         String headPicUrl = entity.getHeadPicUrl();
         if (headPicUrl != null) {
-            stmt.bindString(7, headPicUrl);
+            stmt.bindString(10, headPicUrl);
         }
  
         String mobile = entity.getMobile();
         if (mobile != null) {
-            stmt.bindString(8, mobile);
+            stmt.bindString(11, mobile);
         }
-        stmt.bindLong(9, entity.getNewMessageCounts());
     }
 
     @Override
@@ -120,33 +134,43 @@ public class ContactModelDao extends AbstractDao<ContactModel, Long> {
         if (userId != null) {
             stmt.bindString(2, userId);
         }
+        stmt.bindLong(3, entity.getGroupId());
+ 
+        String groupName = entity.getGroupName();
+        if (groupName != null) {
+            stmt.bindString(4, groupName);
+        }
+ 
+        String groupHeadPicUrl = entity.getGroupHeadPicUrl();
+        if (groupHeadPicUrl != null) {
+            stmt.bindString(5, groupHeadPicUrl);
+        }
  
         String jid = entity.getJid();
         if (jid != null) {
-            stmt.bindString(3, jid);
+            stmt.bindString(6, jid);
         }
  
         String userName = entity.getUserName();
         if (userName != null) {
-            stmt.bindString(4, userName);
+            stmt.bindString(7, userName);
         }
  
         String lastMessage = entity.getLastMessage();
         if (lastMessage != null) {
-            stmt.bindString(5, lastMessage);
+            stmt.bindString(8, lastMessage);
         }
-        stmt.bindLong(6, entity.getLastTime());
+        stmt.bindLong(9, entity.getLastTime());
  
         String headPicUrl = entity.getHeadPicUrl();
         if (headPicUrl != null) {
-            stmt.bindString(7, headPicUrl);
+            stmt.bindString(10, headPicUrl);
         }
  
         String mobile = entity.getMobile();
         if (mobile != null) {
-            stmt.bindString(8, mobile);
+            stmt.bindString(11, mobile);
         }
-        stmt.bindLong(9, entity.getNewMessageCounts());
     }
 
     @Override
@@ -159,13 +183,15 @@ public class ContactModelDao extends AbstractDao<ContactModel, Long> {
         ContactModel entity = new ContactModel( //
             cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0), // _id
             cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1), // userId
-            cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2), // jid
-            cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3), // userName
-            cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4), // lastMessage
-            cursor.getLong(offset + 5), // lastTime
-            cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6), // headPicUrl
-            cursor.isNull(offset + 7) ? null : cursor.getString(offset + 7), // mobile
-            cursor.getInt(offset + 8) // newMessageCounts
+            cursor.getInt(offset + 2), // groupId
+            cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3), // groupName
+            cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4), // groupHeadPicUrl
+            cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5), // jid
+            cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6), // userName
+            cursor.isNull(offset + 7) ? null : cursor.getString(offset + 7), // lastMessage
+            cursor.getLong(offset + 8), // lastTime
+            cursor.isNull(offset + 9) ? null : cursor.getString(offset + 9), // headPicUrl
+            cursor.isNull(offset + 10) ? null : cursor.getString(offset + 10) // mobile
         );
         return entity;
     }
@@ -174,13 +200,15 @@ public class ContactModelDao extends AbstractDao<ContactModel, Long> {
     public void readEntity(Cursor cursor, ContactModel entity, int offset) {
         entity.set_id(cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0));
         entity.setUserId(cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1));
-        entity.setJid(cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2));
-        entity.setUserName(cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3));
-        entity.setLastMessage(cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4));
-        entity.setLastTime(cursor.getLong(offset + 5));
-        entity.setHeadPicUrl(cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6));
-        entity.setMobile(cursor.isNull(offset + 7) ? null : cursor.getString(offset + 7));
-        entity.setNewMessageCounts(cursor.getInt(offset + 8));
+        entity.setGroupId(cursor.getInt(offset + 2));
+        entity.setGroupName(cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3));
+        entity.setGroupHeadPicUrl(cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4));
+        entity.setJid(cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5));
+        entity.setUserName(cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6));
+        entity.setLastMessage(cursor.isNull(offset + 7) ? null : cursor.getString(offset + 7));
+        entity.setLastTime(cursor.getLong(offset + 8));
+        entity.setHeadPicUrl(cursor.isNull(offset + 9) ? null : cursor.getString(offset + 9));
+        entity.setMobile(cursor.isNull(offset + 10) ? null : cursor.getString(offset + 10));
      }
     
     @Override
