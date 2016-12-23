@@ -55,8 +55,15 @@ public class PingPongManager extends BaseManager{
     private AlarmManager pingAlarmManager;
     private AlarmManager pongAlarmManager;
 
+    // callBack
+    private PingPongCallBack callBack;
+
     public PingPongManager(Context context, AbstractXMPPConnection mConnection) {
         super(context, mConnection);
+    }
+
+    public void registerCallBack(PingPongCallBack callBack) {
+        this.callBack = callBack;
     }
 
     // 注册心跳服务
@@ -149,6 +156,10 @@ public class PingPongManager extends BaseManager{
                 sendPingPoingPackaget();
             } else {
                 LogTool.d("Ping: alarm received, but not auth to server.");
+                if (callBack!= null){
+                    LogTool.d("try to login now...");
+                    callBack.pingNoneAuthenticated();
+                }
             }
         }
     }
@@ -162,20 +173,24 @@ public class PingPongManager extends BaseManager{
             // 超时就注销登录
             dealTimeOut();
             ((SnakeService) context).logout();
+
+            if (callBack!= null){
+                callBack.pingTimeOut();
+            }
         }
     }
 
     // 释放资源
     private void dealTimeOut(){
-        cacelPingAlarmService();
+//        cacelPingAlarmService();
         cacelPongAlarmService();
 
-        context.unregisterReceiver(this.mPongTimeoutAlarmReceiver);
-        context.unregisterReceiver(this.mPingAlarmReceiver);
-
-        if (mPongListener != null){
-            mConnection.removePacketInterceptor(mPongListener);
-        }
+//        context.unregisterReceiver(this.mPongTimeoutAlarmReceiver);
+//        context.unregisterReceiver(this.mPingAlarmReceiver);
+//
+//        if (mPongListener != null){
+//            mConnection.removePacketInterceptor(mPongListener);
+//        }
     }
 
     //----------------------------------------------------------------------------------------------
@@ -219,6 +234,17 @@ public class PingPongManager extends BaseManager{
         }
         pongAlarmManager
                 .cancel(mPongTimeoutAlarmPendIntent);// 取消超时闹钟
+    }
+
+    // ---------- 回调 ----------------------------------------------------------------------------
+
+    public interface PingPongCallBack{
+
+        // 超时回调
+        public void pingTimeOut();
+
+        // ping 闹钟后没有登录响应
+        public void pingNoneAuthenticated();
     }
 
     /**

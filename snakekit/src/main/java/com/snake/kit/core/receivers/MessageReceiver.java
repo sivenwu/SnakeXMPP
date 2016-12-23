@@ -22,8 +22,10 @@ public abstract class MessageReceiver extends BroadcastReceiver {
         if (intent != null) {
             if (intent.getExtras() != null) {
                 MessageModel message = intent.getExtras().getParcelable("message");
-                LogTool.i(message.toString());
-                onMessage(context, message, message.getBody());
+                if (message != null) {
+                    LogTool.i(message.toString());
+                    onMessage(context, message, message.getBody());
+                }
             }
         }
     }
