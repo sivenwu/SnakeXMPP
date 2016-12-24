@@ -28,8 +28,8 @@ public class PingPongManager extends BaseManager{
     // info
     private String mPingID;
     private long mPingTimestamp;//ping时间戳
-    public static final int PING_INTERVAL = 30 * 1000; // 心跳时间
-    public static final int PACKET_TIMEOUT = 30 * 1000;// 超时时间
+    public static final int PING_INTERVAL = 5 * 1000; // 心跳时间
+    public static final int PACKET_TIMEOUT = 5 * 1000;// 超时时间
 
     // action
     public static final String ACTION_HEADER = "SNACK";
@@ -70,7 +70,7 @@ public class PingPongManager extends BaseManager{
 
                 // 如果服务器返回的消息为ping服务器时的消息，说明没有掉线,然后取消超时闹钟等待下一次启动超时闹钟
                 if (packet.getStanzaId().equals(mPingID)) {
-                    LogTool.d("alive now ! cacel timoutAlarm!!");
+                    LogTool.d("alive now ! cacel timoutAlarm!! " +System.currentTimeMillis());
                     mPingID = null;
                     cacelPongAlarmService();
                 }
@@ -145,10 +145,12 @@ public class PingPongManager extends BaseManager{
      */
     private class PongTimeoutAlarmReceiver extends BroadcastReceiver {
         public void onReceive(Context ctx, Intent i) {
-            LogTool.d( "Ping: timeout for " + mPingID);
-            // 超时就注销登录
-            dealTimeOut();
-            ((SnakeService)context).logout();
+            if (mPingID != null) {
+                LogTool.d("Ping: timeout for " + mPingID);
+                // 超时就注销登录
+                dealTimeOut();
+                ((SnakeService) context).logout();
+            }
         }
     }
 
@@ -171,7 +173,7 @@ public class PingPongManager extends BaseManager{
         // 此时需要启动超时判断的闹钟了，时间间隔为PACKET_TIMEOUT秒
         ((AlarmManager)context.getSystemService(Context.ALARM_SERVICE))
                 .setInexactRepeating(AlarmManager.RTC_WAKEUP,
-                        System.currentTimeMillis() + PING_INTERVAL,
+                        System.currentTimeMillis(),
                         PING_INTERVAL, mPingAlarmPendIntent);
     }
 
