@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.ArrayMap;
 
 import com.snake.kit.core.mngservices.ISessionManager;
+import com.snake.kit.interfaces.SnakeServiceLetterListener;
 
 import org.jivesoftware.smack.AbstractXMPPConnection;
 import org.jivesoftware.smack.chat.Chat;
@@ -25,8 +26,9 @@ public class SmackSessionManager extends BaseManager implements ISessionManager{
     private Map<String,Object> mCurChatMap;
 //    private SparseArray mSparseArray;
 
-    public SmackSessionManager(Context context, AbstractXMPPConnection mConnection) {
-        super(context, mConnection);
+
+    public SmackSessionManager(Context context, SnakeServiceLetterListener mLetterListener, AbstractXMPPConnection mConnection) {
+        super(context, mLetterListener, mConnection);
 
         mChatManager = ChatManager.getInstanceFor(mConnection);
         mCurChatMap = new ArrayMap<>();

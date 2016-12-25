@@ -2,11 +2,14 @@ package com.snake.kit.core.managers;
 
 import android.content.Context;
 
+import com.snake.kit.core.handlers.SnakeServiceManager;
 import com.snake.kit.core.mngservices.ISmackOnselfManager;
+import com.snake.kit.interfaces.SnakeServiceLetterListener;
 
 import org.jivesoftware.smack.AbstractXMPPConnection;
 import org.jivesoftware.smack.PacketCollector;
 import org.jivesoftware.smack.SmackException;
+import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.filter.AndFilter;
 import org.jivesoftware.smack.filter.StanzaFilter;
 import org.jivesoftware.smack.filter.StanzaIdFilter;
@@ -14,6 +17,7 @@ import org.jivesoftware.smack.filter.StanzaTypeFilter;
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smackx.iqregister.packet.Registration;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,9 +31,10 @@ public class SmackOnselfManager extends BaseManager implements ISmackOnselfManag
     private String curAccount;
     private String curPassword;
 
-    public SmackOnselfManager(Context context, AbstractXMPPConnection mConnection) {
-        super(context, mConnection);
+    public SmackOnselfManager(Context context, SnakeServiceLetterListener mLetterListener, AbstractXMPPConnection mConnection) {
+        super(context, mLetterListener, mConnection);
     }
+
 
     @Override
     public void login() throws Exception {
@@ -37,11 +42,17 @@ public class SmackOnselfManager extends BaseManager implements ISmackOnselfManag
     }
 
     @Override
-    public void login(String account, String password) throws Exception {
+    public void login(String account, String password) {
 
         this.curAccount = account;
         this.curPassword = password;
-        this.mConnection.login(account,password);
+
+        try {
+            this.mConnection.login(account,password);
+
+        } catch (Exception e) {
+            getmLetterListener().sendHandlerLetter(SnakeServiceManager.HANDLER_CODE_LOGIN_FAILED,e);
+        }
     }
 
     @Override

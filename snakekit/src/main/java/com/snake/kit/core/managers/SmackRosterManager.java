@@ -5,6 +5,7 @@ import android.util.SparseArray;
 
 import com.snake.api.apptools.LogTool;
 import com.snake.kit.core.mngservices.IRosterManager;
+import com.snake.kit.interfaces.SnakeServiceLetterListener;
 
 import org.jivesoftware.smack.AbstractXMPPConnection;
 import org.jivesoftware.smack.SmackException;
@@ -29,13 +30,14 @@ public class SmackRosterManager extends BaseManager implements IRosterManager, R
     private Roster mRoster;
     private SparseArray mUserList; // key ：（jid 对应的主键） value ：RosterEntry
 
-    public SmackRosterManager(Context context, AbstractXMPPConnection mConnection) {
-        super(context, mConnection);
+    public SmackRosterManager(Context context, SnakeServiceLetterListener mLetterListener, AbstractXMPPConnection mConnection) {
+        super(context, mLetterListener, mConnection);
         mRoster = Roster.getInstanceFor(this.mConnection);
         // 默认添加好友需要询问
         mRoster.setSubscriptionMode(Roster.SubscriptionMode.manual);
         mUserList = new SparseArray();
     }
+
 
     public void entriesAdded(Collection<String> addresses) {
         // 添加好友

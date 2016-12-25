@@ -2,6 +2,8 @@ package com.snake.kit.core.managers;
 
 import android.content.Context;
 
+import com.snake.kit.interfaces.SnakeServiceLetterListener;
+
 import org.jivesoftware.smack.AbstractXMPPConnection;
 
 /**
@@ -11,7 +13,7 @@ import org.jivesoftware.smack.AbstractXMPPConnection;
 
 public class SmackMucManager  extends BaseManager{
 
-    public SmackMucManager(Context context, AbstractXMPPConnection mConnection) {
-        super(context, mConnection);
+    public SmackMucManager(Context context, SnakeServiceLetterListener mLetterListener, AbstractXMPPConnection mConnection) {
+        super(context, mLetterListener, mConnection);
     }
 }

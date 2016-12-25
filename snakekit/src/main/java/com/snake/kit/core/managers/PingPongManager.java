@@ -11,6 +11,8 @@ import android.text.format.Time;
 
 import com.snake.api.apptools.LogTool;
 import com.snake.kit.core.SnakeService;
+import com.snake.kit.core.data.bean.NETSTATE;
+import com.snake.kit.interfaces.SnakeServiceLetterListener;
 
 import org.jivesoftware.smack.AbstractXMPPConnection;
 import org.jivesoftware.smack.SmackException;
@@ -23,6 +25,10 @@ import org.jivesoftware.smackx.ping.packet.Ping;
 /**
  * Created by Yuan on 2016/11/8.
  * Detail 心跳管理机制
+ *
+ * normal and strong state: 4G PING(30) PONG (30 + 10)
+ * weak state : 2G PING(40) PONG(40+20)
+ *
  */
 
 public class PingPongManager extends BaseManager{
@@ -30,8 +36,10 @@ public class PingPongManager extends BaseManager{
     // info
     private String mPingID;
     private long mPingTimestamp;//ping时间戳
-    public static final int PING_INTERVAL = 30 * 1000; // 心跳时间
-    public static final int PACKET_TIMEOUT = 10 * 1000;// 超时时间
+    public static int PING_INTERVAL = 30 * 1000; // 心跳时间
+    public static int PACKET_TIMEOUT = 10 * 1000;// 超时时间
+
+    private NETSTATE curNetState = NETSTATE.NORMAL;//心跳一般模式
 
     // action
     public static final String ACTION_HEADER = "SNACK";
@@ -58,8 +66,32 @@ public class PingPongManager extends BaseManager{
     // callBack
     private PingPongCallBack callBack;
 
-    public PingPongManager(Context context, AbstractXMPPConnection mConnection) {
-        super(context, mConnection);
+    public PingPongManager(Context context, SnakeServiceLetterListener mLetterListener, AbstractXMPPConnection mConnection) {
+        super(context, mLetterListener, mConnection);
+    }
+
+    // 更新网络状态改变心跳时间
+    public void updateNetWorkState(NETSTATE state){
+
+        if (curNetState.equals(state)) return ;
+
+        //首先取消闹钟服务
+        cacelPingAlarmService();
+        cacelPongAlarmService();
+
+        curNetState = state;
+        if (curNetState.equals(NETSTATE.NORMAL) || curNetState.equals(NETSTATE.STRONG)){
+            LogTool.d("NORMAL 网络状态切换，心跳机制改变..");
+            PING_INTERVAL = 30 * 1000;
+            PACKET_TIMEOUT = 10 * 1000;
+        }else {
+            LogTool.d("WEAK 网络状态切换，心跳机制改变..");
+            PING_INTERVAL = 40 * 1000;
+            PACKET_TIMEOUT = 20 * 1000;
+        }
+
+        // 重新启动Ping服务
+        getPingAlarmService();
     }
 
     public void registerCallBack(PingPongCallBack callBack) {

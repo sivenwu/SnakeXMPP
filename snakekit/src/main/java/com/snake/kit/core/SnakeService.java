@@ -2,7 +2,10 @@ package com.snake.kit.core;
 
 import android.app.Service;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
 import android.os.Binder;
+import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 
@@ -10,13 +13,17 @@ import com.snake.api.apptools.LogTool;
 import com.snake.api.apptools.SnakePref;
 import com.snake.api.data.SnakeConstants;
 import com.snake.kit.SnakeKit;
+import com.snake.kit.core.data.bean.NETSTATE;
+import com.snake.kit.core.handlers.SnakeServiceManager;
 import com.snake.kit.core.managers.ManagerUtil;
 import com.snake.kit.core.managers.PingPongManager;
 import com.snake.kit.core.managers.SmackMucManager;
 import com.snake.kit.core.managers.SmackOnselfManager;
 import com.snake.kit.core.managers.SmackRosterManager;
 import com.snake.kit.core.managers.SmackSessionManager;
+import com.snake.kit.core.receivers.NetWorkStateReceiver;
 import com.snake.kit.interfaces.ChatMessageListener;
+import com.snake.kit.interfaces.SnakeServiceLetterListener;
 import com.snake.kit.interfaces.XmppLoginListener;
 
 import org.jivesoftware.smack.AbstractXMPPConnection;
@@ -32,13 +39,14 @@ import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smack.tcp.XMPPTCPConnectionConfiguration;
 
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 
 /**
  * Created by Yuan on 2016/11/7.
  * Detail Xmpp service
  */
 
-public class SnakeService extends Service {
+public class SnakeService extends Service implements SnakeServiceLetterListener {
 
     private final String TAG = "SnackService";
 
@@ -54,6 +62,7 @@ public class SnakeService extends Service {
     private PingPongManager pingPongManager;
     private SmackSessionManager sessionManager;
     private SmackOnselfManager onselfManager;
+    private SnakeServiceManager handlerManager;
 
     // User
     private String login;
@@ -63,7 +72,7 @@ public class SnakeService extends Service {
 
     // flag
     private boolean isExcuLogin = false;//是否已经执行登录（非是否登录成功） 为服务是否连接判定
-    private boolean isInitManager = false;// 是否初始化了manager
+    private boolean isInitsConnection = false;// 是否初始化了manager
 
     // listener
     private XmppLoginListener xmppLoginListener;
@@ -94,6 +103,20 @@ public class SnakeService extends Service {
         SnakeKit.getKit().restartSnakeService();
     }
 
+    @Override
+    public void sendHandlerLetter(int code) {
+        if (handlerManager !=null){
+            handlerManager.handler(code);
+        }
+    }
+
+    @Override
+    public void sendHandlerLetter(int code, Object object) {
+        if (handlerManager !=null){
+            handlerManager.handler(code,object);
+        }
+    }
+
     // binder for snackService
     public class SnackBinder extends Binder {
         public SnakeService getService() {
@@ -111,28 +134,24 @@ public class SnakeService extends Service {
 
     // 登录
     public void login(String userName, String password, XmppLoginListener xmppLoginListener) {
+
         this.xmppLoginListener = xmppLoginListener;
-        if (mConnection != null) {
-            if (mConnection.isConnected()) {
-                try {
-                    isExcuLogin = true;
-                    onselfManager.login(userName, password);
-                } catch (Exception e) {
-                    this.xmppLoginListener.onError(e, e.getMessage().toLowerCase());
-                    e.printStackTrace();
-                }
-            }else{
-                try {
-                    isExcuLogin = false;
-                    mConnection.connect();
-                } catch (Exception e) {
-                    this.xmppLoginListener.onError(e, e.getMessage().toLowerCase());
-                    e.printStackTrace();
-                }
+        this.login = userName;
+        this.password = password;
+
+        handlerManager.setXmppLoginListener(this.xmppLoginListener);
+
+        if (mConnection.isConnected()) {
+            try {
+                isExcuLogin = true;
+                onselfManager.login(userName, password);
+            } catch (Exception e) {
+                handlerManager.handler(SnakeServiceManager.HANDLER_CODE_LOGIN_FAILED,e);
             }
         }else{
-            // 如果服务没有启动则启动连接
-//            justConnect();
+            LogTool.i("登录失败，尝试连接服务器中..");
+            isExcuLogin = false;
+            connect();
         }
     }
 
@@ -165,7 +184,6 @@ public class SnakeService extends Service {
      *****************************************************************************/
     public void getAllRosters() {
         rosterManager.getAllRosters();
-        ;
     }
 
     public void addRoster(String user, String name, String groupName) {
@@ -226,6 +244,74 @@ public class SnakeService extends Service {
     //--------- SnackService private method---------------------------------------------------------
     //----------------------------------------------------------------------------------------------
 
+    private void initConnection(){
+
+        handlerManager = SnakeServiceManager.delegate(this);
+        XMPPTCPConnectionConfiguration connectionConfiguration = XMPPTCPConnectionConfiguration.builder()
+                .setHost(this.server)
+                .setPort(this.port)
+                .setServiceName(this.server)
+                .setSendPresence(true)// support presence
+                .setConnectTimeout(1000 * 10)
+//                    .setUsernameAndPassword(this.login,this.password)
+                .setSecurityMode(ConnectionConfiguration.SecurityMode.disabled)//越过证书
+                .build();
+        mConnection = new XMPPTCPConnection(connectionConfiguration);
+        mConnection.addConnectionListener(new ConnectionListener() {
+            @Override
+            public void connected(XMPPConnection connection) {
+                LogTool.d("connected");
+                mConnection = (AbstractXMPPConnection) connection;
+
+                if (mManagerUtil != null)
+                    mManagerUtil.notifyChangeData(mConnection);
+
+                if (!isExcuLogin){// 如果没有执行登录，则进行登录操作
+                    onselfManager.login(login,password);
+                }
+            }
+
+            @Override
+            public void authenticated(XMPPConnection connection, boolean resumed) {
+                LogTool.d("authenticated");
+                sendHandlerLetter(SnakeServiceManager.HANDLER_CODE_LOGIN_SUCCESS);
+                // 开始注册服务
+                registerManagerService();
+            }
+
+            @Override
+            public void connectionClosed() {
+                LogTool.d("connectionClosed");
+            }
+
+            @Override
+            public void connectionClosedOnError(Exception e) {
+                LogTool.d("connectionClosedOnError " + e.getMessage().toString());
+            }
+
+            @Override
+            public void reconnectionSuccessful() {
+                LogTool.d("reconnectionSuccessful");
+            }
+
+            @Override
+            public void reconnectingIn(int seconds) {
+                LogTool.d("reconnectingIn");
+            }
+
+            @Override
+            public void reconnectionFailed(Exception e) {
+                LogTool.d("reconnectionFailed " + e.getMessage().toString());
+            }
+        });
+
+        initManager();
+    }
+
+    private void connect(){
+        connect(this.server,this.port);
+    }
+
     private void connect(String server, int port) {
 
         if (mConnection != null && mConnection.isAuthenticated()) {
@@ -236,6 +322,8 @@ public class SnakeService extends Service {
         this.server = server;
         this.port = port;
 
+        initConnection();
+
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -244,95 +332,37 @@ public class SnakeService extends Service {
         }).start();
     }
 
-    private void connect(){
-        connect(this.server,this.port);
-    }
-
     private void justConnect() {
         try {
-            XMPPTCPConnectionConfiguration connectionConfiguration = XMPPTCPConnectionConfiguration.builder()
-                    .setHost(this.server)
-                    .setPort(this.port)
-                    .setServiceName(this.server)
-                    .setSendPresence(true)// support presence
-                    .setConnectTimeout(1000 * 10)
-//                    .setUsernameAndPassword(this.login,this.password)
-                    .setSecurityMode(ConnectionConfiguration.SecurityMode.disabled)//越过证书
-                    .build();
-            mConnection = new XMPPTCPConnection(connectionConfiguration);
-            mConnection.addConnectionListener(new ConnectionListener() {
-                @Override
-                public void connected(XMPPConnection connection) {
-                    LogTool.d("connected");
-                    mConnection = (AbstractXMPPConnection) connection;
-
-                    if (mManagerUtil != null)
-                    mManagerUtil.notifyChangeData(mConnection);
-
-                    if (!isExcuLogin){// 如果没有执行登录，则进行登录操作
-                        try {
-                            onselfManager.login();
-                        } catch (Exception e) {
-                            LogTool.e(e.getMessage().toString());
-                            e.printStackTrace();
-                        }
-                    }
-                }
-
-                @Override
-                public void authenticated(XMPPConnection connection, boolean resumed) {
-                    LogTool.d("authenticated");
-                    if (xmppLoginListener != null) {
-                        xmppLoginListener.authenticated();
-
-                        // 开始注册服务
-                        registerManagerService();
-                    }
-                }
-
-                @Override
-                public void connectionClosed() {
-                    LogTool.d("connectionClosed");
-                }
-
-                @Override
-                public void connectionClosedOnError(Exception e) {
-                    LogTool.d("connectionClosedOnError " + e.getMessage().toString());
-                }
-
-                @Override
-                public void reconnectionSuccessful() {
-                    LogTool.d("reconnectionSuccessful");
-                }
-
-                @Override
-                public void reconnectingIn(int seconds) {
-                    LogTool.d("reconnectingIn");
-                }
-
-                @Override
-                public void reconnectionFailed(Exception e) {
-                    LogTool.d("reconnectionFailed " + e.getMessage().toString());
-                }
-            });
-
             if (!mConnection.isConnected())
-            mConnection.connect();
-            if (!isInitManager)
-            initManager();
-
+                mConnection.connect();
         } catch (SmackException | IOException | XMPPException e) {
             LogTool.e(e.getMessage().toString());
             e.printStackTrace();
         }
     }
 
+    // 注册监听网络状态广播
+    private void registerNetWorkStateService(){
+        IntentFilter filter=new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        NetWorkStateReceiver myReceiver=new NetWorkStateReceiver();
+
+        myReceiver.setOnBindNetWorkStateListener(new NetWorkStateReceiver.OnBindNetWorkStateListener() {
+            @Override
+            public void getNetWorkState(NETSTATE netstate) {
+                pingPongManager.updateNetWorkState(netstate);
+            }
+        });
+
+        this.registerReceiver(myReceiver, filter);
+    }
+
     private void initManager() {
-        mucManager = new SmackMucManager(this, mConnection);
-        rosterManager = new SmackRosterManager(this, mConnection);
-        pingPongManager = new PingPongManager(this, mConnection);
-        sessionManager = new SmackSessionManager(this, mConnection);
-        onselfManager = new SmackOnselfManager(this, mConnection);
+        mucManager = new SmackMucManager(this,this, mConnection);
+        rosterManager = new SmackRosterManager(this,this, mConnection);
+        pingPongManager = new PingPongManager(this,this, mConnection);
+        sessionManager = new SmackSessionManager(this, this,mConnection);
+        onselfManager = new SmackOnselfManager(this,this, mConnection);
 
         mManagerUtil = new ManagerUtil();
         mManagerUtil.register(mucManager);
@@ -340,8 +370,6 @@ public class SnakeService extends Service {
         mManagerUtil.register(pingPongManager);
         mManagerUtil.register(sessionManager);
         mManagerUtil.register(onselfManager);
-
-        isInitManager = true;
     }
 
 
@@ -350,16 +378,20 @@ public class SnakeService extends Service {
         pingPongManager.registerCallBack(new PingPongManager.PingPongCallBack() {
             @Override
             public void pingTimeOut() {
+                // pong 超时回调
                 isExcuLogin = false;
             }
 
             @Override
             public void pingNoneAuthenticated() {
+                // ping 闹钟广播执行后 发现没有登录回调
                 // 尝试登录
                 logout();
                 connect();
             }
         });
+
+        registerNetWorkStateService();
         //...
     }
 
