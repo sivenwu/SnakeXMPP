@@ -6,6 +6,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Build;
+import android.text.format.Time;
 
 import com.snake.api.apptools.LogTool;
 import com.snake.kit.core.SnakeService;
@@ -28,8 +30,8 @@ public class PingPongManager extends BaseManager{
     // info
     private String mPingID;
     private long mPingTimestamp;//ping时间戳
-    public static final int PING_INTERVAL = 5 * 1000; // 心跳时间
-    public static final int PACKET_TIMEOUT = 5 * 1000;// 超时时间
+    public static final int PING_INTERVAL = 30 * 1000; // 心跳时间
+    public static final int PACKET_TIMEOUT = 10 * 1000;// 超时时间
 
     // action
     public static final String ACTION_HEADER = "SNACK";
@@ -49,8 +51,19 @@ public class PingPongManager extends BaseManager{
     private BroadcastReceiver mPongTimeoutAlarmReceiver = new PongTimeoutAlarmReceiver();
     private BroadcastReceiver mPingAlarmReceiver = new PingAlarmReceiver();
 
+    // alarm
+    private AlarmManager pingAlarmManager;
+    private AlarmManager pongAlarmManager;
+
+    // callBack
+    private PingPongCallBack callBack;
+
     public PingPongManager(Context context, AbstractXMPPConnection mConnection) {
         super(context, mConnection);
+    }
+
+    public void registerCallBack(PingPongCallBack callBack) {
+        this.callBack = callBack;
     }
 
     // 注册心跳服务
@@ -70,7 +83,7 @@ public class PingPongManager extends BaseManager{
 
                 // 如果服务器返回的消息为ping服务器时的消息，说明没有掉线,然后取消超时闹钟等待下一次启动超时闹钟
                 if (packet.getStanzaId().equals(mPingID)) {
-                    LogTool.d("alive now ! cacel timoutAlarm!! " +System.currentTimeMillis());
+                    LogTool.d("alive now ! cacel timoutAlarm!!");
                     mPingID = null;
                     cacelPongAlarmService();
                 }
@@ -130,12 +143,23 @@ public class PingPongManager extends BaseManager{
      */
     private class PingAlarmReceiver extends BroadcastReceiver {
         public void onReceive(Context ctx, Intent i) {
+
+            LogTool.d(getTime());
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                getPingAlarmService();
+            }
+
             if (mConnection.isAuthenticated()) {
                 // 收到ping服务器的闹钟，即ping一下服务器
                 LogTool.d("PingAlarmReceiver,ready to send Ping...");
                 sendPingPoingPackaget();
             } else {
                 LogTool.d("Ping: alarm received, but not auth to server.");
+                if (callBack!= null){
+                    LogTool.d("try to login now...");
+                    callBack.pingNoneAuthenticated();
+                }
             }
         }
     }
@@ -145,54 +169,104 @@ public class PingPongManager extends BaseManager{
      */
     private class PongTimeoutAlarmReceiver extends BroadcastReceiver {
         public void onReceive(Context ctx, Intent i) {
-            if (mPingID != null) {
-                LogTool.d("Ping: timeout for " + mPingID);
-                // 超时就注销登录
-                dealTimeOut();
-                ((SnakeService) context).logout();
+            LogTool.d("Ping: timeout for " + mPingID);
+            // 超时就注销登录
+            dealTimeOut();
+            ((SnakeService) context).logout();
+
+            if (callBack!= null){
+                callBack.pingTimeOut();
             }
         }
     }
 
     // 释放资源
     private void dealTimeOut(){
-        cacelPingAlarmService();
+//        cacelPingAlarmService();
         cacelPongAlarmService();
 
-        context.unregisterReceiver(this.mPongTimeoutAlarmReceiver);
-        context.unregisterReceiver(this.mPingAlarmReceiver);
-
-        if (mPongListener != null){
-            mConnection.removePacketInterceptor(mPongListener);
-        }
+//        context.unregisterReceiver(this.mPongTimeoutAlarmReceiver);
+//        context.unregisterReceiver(this.mPingAlarmReceiver);
+//
+//        if (mPongListener != null){
+//            mConnection.removePacketInterceptor(mPongListener);
+//        }
     }
 
     //----------------------------------------------------------------------------------------------
 
     private void getPingAlarmService(){
+
+        pingAlarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+
         // 此时需要启动超时判断的闹钟了，时间间隔为PACKET_TIMEOUT秒
-        ((AlarmManager)context.getSystemService(Context.ALARM_SERVICE))
-                .setInexactRepeating(AlarmManager.RTC_WAKEUP,
-                        System.currentTimeMillis(),
-                        PING_INTERVAL, mPingAlarmPendIntent);
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {// api 19以上后 闹钟服务将不准确
+
+            pingAlarmManager .setInexactRepeating(AlarmManager.RTC_WAKEUP,
+                            System.currentTimeMillis() + PING_INTERVAL,
+                            PING_INTERVAL, mPingAlarmPendIntent);
+
+        }else{
+            LogTool.d("getPingAlarmService setExact..");
+            pingAlarmManager.setExact(AlarmManager.RTC_WAKEUP,System.currentTimeMillis()+PING_INTERVAL,mPingAlarmPendIntent);
+        }
     }
 
     private void cacelPingAlarmService(){
-        ((AlarmManager)
-                context.getSystemService(Context.ALARM_SERVICE))
+        if (pingAlarmManager == null){
+            pingAlarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        }
+        pingAlarmManager
                 .cancel(mPongTimeoutAlarmPendIntent);// 取消超时闹钟
     }
 
     private void getPongAlarmService(){
         // 此时需要启动超时判断的闹钟了，时间间隔为PACKET_TIMEOUT秒
-        ((AlarmManager) context.getSystemService(Context.ALARM_SERVICE)).set(
+        pongAlarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        pongAlarmManager.set(
                 AlarmManager.RTC_WAKEUP, System.currentTimeMillis()
-                        +PACKET_TIMEOUT + 3000, mPongTimeoutAlarmPendIntent);
+                        +PACKET_TIMEOUT + PING_INTERVAL, mPongTimeoutAlarmPendIntent);
     }
 
     private void cacelPongAlarmService(){
-        ((AlarmManager)
-                context.getSystemService(Context.ALARM_SERVICE))
+        if (pongAlarmManager == null){
+            pongAlarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        }
+        pongAlarmManager
                 .cancel(mPongTimeoutAlarmPendIntent);// 取消超时闹钟
     }
+
+    // ---------- 回调 ----------------------------------------------------------------------------
+
+    public interface PingPongCallBack{
+
+        // 超时回调
+        public void pingTimeOut();
+
+        // ping 闹钟后没有登录响应
+        public void pingNoneAuthenticated();
+    }
+
+    /**
+     * 测试时间 方法
+     * @return
+     */
+    private String getTime(){
+        Time time = new Time("GMT+8");
+        time.setToNow();
+        int year = time.year;
+        int month = time.month;
+        int day = time.monthDay;
+        int minute = time.minute;
+        int hour = time.hour;
+        int sec = time.second;
+        return "当前时间为：" + year +
+                "年 " + month +
+                "月 " + day +
+                "日 " + hour +
+                "时 " + minute +
+                "分 " + sec +
+                "秒";
+    }
+
 }

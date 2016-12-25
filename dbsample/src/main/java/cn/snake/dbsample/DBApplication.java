@@ -2,6 +2,8 @@ package cn.snake.dbsample;
 
 import android.app.Application;
 
+import com.snake.api.apptools.SnakePref;
+
 import cn.snake.dbkit.DBHelper;
 
 /**
@@ -14,5 +16,6 @@ public class DBApplication extends Application {
     public void onCreate() {
         super.onCreate();
         DBHelper.init(this, false);//db init
+        SnakePref.init(this);
     }
 }

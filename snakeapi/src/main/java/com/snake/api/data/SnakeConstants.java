@@ -7,6 +7,8 @@ package com.snake.api.data;
 
 public class SnakeConstants {
 
+    public static String MESSAGE_USER_ID = "userId";
+
     public static String SMACK_USER_ACCOUNT = "0";
 
     public static String SMACK_USER_PASSWORD = "1";
