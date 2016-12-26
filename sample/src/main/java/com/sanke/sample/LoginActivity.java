@@ -14,15 +14,15 @@ import com.snake.kit.interfaces.XmppLoginListener;
 
 public class LoginActivity extends AppCompatActivity {
 
-//    private String url = "yyssqe.oicp.net";
-//    private String name = "siven02";
-//    private String password = "123";
-//    private int port = 25196;
-
-    private String url = "192.168.1.101";
-    private String name = "siven";
+    private String url = "yyssqe.oicp.net";
+    private String name = "siven02";
     private String password = "123";
-    private int port = 5222;
+    private int port = 25196;
+
+//    private String url = "192.168.1.101";
+//    private String name = "siven";
+//    private String password = "123";
+//    private int port = 5222;
 
     // 来自自己本地分支，测试注释
     private EditText loginEdit, passwordEidt;

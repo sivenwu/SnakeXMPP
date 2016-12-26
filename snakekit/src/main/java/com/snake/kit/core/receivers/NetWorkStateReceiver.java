@@ -5,11 +5,24 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.telephony.TelephonyManager;
 
 import com.snake.kit.core.data.bean.NETSTATE;
 
-import static android.telephony.TelephonyManager.*;
+import static android.telephony.TelephonyManager.NETWORK_TYPE_1xRTT;
+import static android.telephony.TelephonyManager.NETWORK_TYPE_CDMA;
+import static android.telephony.TelephonyManager.NETWORK_TYPE_EDGE;
+import static android.telephony.TelephonyManager.NETWORK_TYPE_EHRPD;
+import static android.telephony.TelephonyManager.NETWORK_TYPE_EVDO_0;
+import static android.telephony.TelephonyManager.NETWORK_TYPE_EVDO_A;
+import static android.telephony.TelephonyManager.NETWORK_TYPE_EVDO_B;
+import static android.telephony.TelephonyManager.NETWORK_TYPE_GPRS;
+import static android.telephony.TelephonyManager.NETWORK_TYPE_HSDPA;
+import static android.telephony.TelephonyManager.NETWORK_TYPE_HSPA;
+import static android.telephony.TelephonyManager.NETWORK_TYPE_HSPAP;
+import static android.telephony.TelephonyManager.NETWORK_TYPE_HSUPA;
+import static android.telephony.TelephonyManager.NETWORK_TYPE_IDEN;
+import static android.telephony.TelephonyManager.NETWORK_TYPE_LTE;
+import static android.telephony.TelephonyManager.NETWORK_TYPE_UMTS;
 
 /**
  * Created by Yuan on 2016/12/24.
@@ -20,6 +33,7 @@ import static android.telephony.TelephonyManager.*;
 public class NetWorkStateReceiver extends BroadcastReceiver{
 
     private NETSTATE curNetState;
+    private boolean isAvailable;
 
     OnBindNetWorkStateListener onBindNetWorkStateListener;
 
@@ -35,6 +49,9 @@ public class NetWorkStateReceiver extends BroadcastReceiver{
         if (mNetworkInfo != null && mNetworkInfo.isConnectedOrConnecting()) {
             displayState(mNetworkInfo);
         }
+
+
+
     }
 
     private void displayState(NetworkInfo info){

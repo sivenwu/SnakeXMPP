@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.os.Binder;
-import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 
@@ -39,7 +38,6 @@ import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smack.tcp.XMPPTCPConnectionConfiguration;
 
 import java.io.IOException;
-import java.lang.ref.WeakReference;
 
 /**
  * Created by Yuan on 2016/11/7.
@@ -71,11 +69,10 @@ public class SnakeService extends Service implements SnakeServiceLetterListener 
     private int port;
 
     // flag
-    private boolean isExcuLogin = false;//是否已经执行登录（非是否登录成功） 为服务是否连接判定
+    private boolean isExcuLogin = true;//是否已经执行登录（非是否登录成功)
     private boolean isInitsConnection = false;// 是否初始化了manager
 
     // listener
-    private XmppLoginListener xmppLoginListener;
 
     @Nullable
     @Override
@@ -135,16 +132,31 @@ public class SnakeService extends Service implements SnakeServiceLetterListener 
     // 登录
     public void login(String userName, String password, XmppLoginListener xmppLoginListener) {
 
-        this.xmppLoginListener = xmppLoginListener;
         this.login = userName;
         this.password = password;
 
-        handlerManager.setXmppLoginListener(this.xmppLoginListener);
+        handlerManager.setXmppLoginListener(xmppLoginListener);
 
         if (mConnection.isConnected()) {
             try {
                 isExcuLogin = true;
                 onselfManager.login(userName, password);
+            } catch (Exception e) {
+                handlerManager.handler(SnakeServiceManager.HANDLER_CODE_LOGIN_FAILED,e);
+            }
+        }else{
+            LogTool.i("登录失败，尝试连接服务器中..");
+            isExcuLogin = false;
+            connect();
+        }
+    }
+
+    public void login(){
+
+        if (mConnection.isConnected()) {
+            try {
+                isExcuLogin = true;
+                onselfManager.login(login, password);
             } catch (Exception e) {
                 handlerManager.handler(SnakeServiceManager.HANDLER_CODE_LOGIN_FAILED,e);
             }
@@ -260,7 +272,7 @@ public class SnakeService extends Service implements SnakeServiceLetterListener 
         mConnection.addConnectionListener(new ConnectionListener() {
             @Override
             public void connected(XMPPConnection connection) {
-                LogTool.d("connected");
+                LogTool.d("connected ,isExcuLogin :" + isExcuLogin);
                 mConnection = (AbstractXMPPConnection) connection;
 
                 if (mManagerUtil != null)
@@ -286,12 +298,13 @@ public class SnakeService extends Service implements SnakeServiceLetterListener 
 
             @Override
             public void connectionClosedOnError(Exception e) {
-                LogTool.d("connectionClosedOnError " + e.getMessage().toString());
+                LogTool.d("connectionClosedOnError " + e.getMessage().toString() + "connect is null ? " + (mConnection == null));
             }
 
             @Override
             public void reconnectionSuccessful() {
                 LogTool.d("reconnectionSuccessful");
+                sessionManager.getOfflineMessage();
             }
 
             @Override
@@ -322,6 +335,7 @@ public class SnakeService extends Service implements SnakeServiceLetterListener 
         this.server = server;
         this.port = port;
 
+        if (mConnection == null)
         initConnection();
 
         new Thread(new Runnable() {
@@ -378,15 +392,11 @@ public class SnakeService extends Service implements SnakeServiceLetterListener 
         pingPongManager.registerCallBack(new PingPongManager.PingPongCallBack() {
             @Override
             public void pingTimeOut() {
-                // pong 超时回调
-                isExcuLogin = false;
+               //.. 暂时不做什么，内部已经实现
             }
 
             @Override
             public void pingNoneAuthenticated() {
-                // ping 闹钟广播执行后 发现没有登录回调
-                // 尝试登录
-                logout();
                 connect();
             }
         });

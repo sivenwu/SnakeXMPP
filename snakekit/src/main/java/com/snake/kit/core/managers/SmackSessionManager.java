@@ -10,6 +10,7 @@ import org.jivesoftware.smack.AbstractXMPPConnection;
 import org.jivesoftware.smack.chat.Chat;
 import org.jivesoftware.smack.chat.ChatManager;
 import org.jivesoftware.smack.packet.Message;
+import org.jivesoftware.smackx.offline.OfflineMessageManager;
 
 import java.util.Map;
 
@@ -23,6 +24,7 @@ public class SmackSessionManager extends BaseManager implements ISessionManager{
     private SmackMessageManager mSmackMessageManager;
 
     private ChatManager mChatManager;
+    private OfflineMessageManager mOfflineMessageManager;
     private Map<String,Object> mCurChatMap;
 //    private SparseArray mSparseArray;
 
@@ -31,9 +33,11 @@ public class SmackSessionManager extends BaseManager implements ISessionManager{
         super(context, mLetterListener, mConnection);
 
         mChatManager = ChatManager.getInstanceFor(mConnection);
+        mOfflineMessageManager = new OfflineMessageManager(mConnection);
+
         mCurChatMap = new ArrayMap<>();
 //        mSparseArray = new SparseArray();
-        mSmackMessageManager = new SmackMessageManager(mChatManager);
+        mSmackMessageManager = new SmackMessageManager(mChatManager,mOfflineMessageManager);
 
         mSmackMessageManager.registerListenter();
     }
@@ -99,6 +103,12 @@ public class SmackSessionManager extends BaseManager implements ISessionManager{
 
     @Override
     public void receiveMessage() {
+
+    }
+
+    public void getOfflineMessage(){
+
+        mSmackMessageManager.getOfflineMessage();
 
     }
 }

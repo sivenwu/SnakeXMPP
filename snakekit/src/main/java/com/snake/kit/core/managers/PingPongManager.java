@@ -75,6 +75,10 @@ public class PingPongManager extends BaseManager{
 
         if (curNetState.equals(state)) return ;
 
+        // 首先重新连接
+//        ((SnakeService)context).logout();
+//        ((SnakeService)context).login();
+
         //首先取消闹钟服务
         cacelPingAlarmService();
         cacelPongAlarmService();
@@ -249,7 +253,7 @@ public class PingPongManager extends BaseManager{
             pingAlarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         }
         pingAlarmManager
-                .cancel(mPongTimeoutAlarmPendIntent);// 取消超时闹钟
+                .cancel(mPingAlarmPendIntent);// 取消超时闹钟
     }
 
     private void getPongAlarmService(){

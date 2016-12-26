@@ -25,9 +25,9 @@ public class SnakeServiceManager {
 
 
     // Listenter
-    private XmppLoginListener mXmppLoginListener;
+    private WeakReference<XmppLoginListener> mWfXmppLoginListener;
     public void setXmppLoginListener(XmppLoginListener mXmppLoginListener) {
-        this.mXmppLoginListener = mXmppLoginListener;
+        this.mWfXmppLoginListener = new WeakReference<XmppLoginListener>(mXmppLoginListener);
     }
 
 
@@ -68,22 +68,24 @@ public class SnakeServiceManager {
     //---------------------------------------------------------------------------------------------
 
     private void justLoginSuccess(){
-        if (this.mXmppLoginListener !=null){
-            this.mXmppLoginListener.authenticated();
+        if (this.mWfXmppLoginListener.get() !=null){
+            this.mWfXmppLoginListener.get().authenticated();
+            this.mWfXmppLoginListener.clear();// 回收
         }
     }
 
     private void loginFailed(){
-        if (this.mXmppLoginListener !=null){
+        if (this.mWfXmppLoginListener.get() !=null){
             if (curHandlerObject != null) {
                 Exception mException = (Exception) curHandlerObject;
                 if (mException != null) {
-                    this.mXmppLoginListener.onError(mException, mException.getMessage().toLowerCase());
+                    this.mWfXmppLoginListener.get().onError(mException, mException.getMessage().toLowerCase());
                     mException.printStackTrace();
                 }
             }else{
-                this.mXmppLoginListener.onError(null, "");
+                this.mWfXmppLoginListener.get().onError(null, "");
             }
+            this.mWfXmppLoginListener.clear();// 回收
         }
     }
 
