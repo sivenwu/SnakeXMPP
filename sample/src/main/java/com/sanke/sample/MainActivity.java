@@ -1,5 +1,6 @@
 package com.sanke.sample;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -9,6 +10,7 @@ import android.widget.TextView;
 
 import com.snake.api.apptools.LogTool;
 import com.snake.api.data.MessageModel;
+import com.snake.kit.controllers.PublicController;
 import com.snake.kit.controllers.RosterController;
 import com.snake.kit.controllers.SessionController;
 import com.snake.kit.interfaces.ChatMessageListener;
@@ -49,6 +51,15 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 SessionController.sendMessage("wusy@siven-pc","hi 来自客户端消息");
+            }
+        });
+
+        findViewById(R.id.logout_btn).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                PublicController.logout();
+                startActivity(new Intent(MainActivity.this,LoginActivity.class));
+                finish();
             }
         });
 

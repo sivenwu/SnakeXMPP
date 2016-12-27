@@ -7,22 +7,17 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.snake.kit.SnakeKit;
 import com.snake.kit.controllers.PublicController;
 import com.snake.kit.core.data.SnakeRouter;
 import com.snake.kit.interfaces.XmppLoginListener;
 
 public class LoginActivity extends AppCompatActivity {
 
-    private String url = "yyssqe.oicp.net";
     private String name = "siven02";
     private String password = "123";
-    private int port = 25196;
 
-//    private String url = "192.168.1.101";
 //    private String name = "siven";
 //    private String password = "123";
-//    private int port = 5222;
 
     // 来自自己本地分支，测试注释
     private EditText loginEdit, passwordEidt;
@@ -31,9 +26,6 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-
-//        // 初始化snake
-        SnakeKit.getKit().init(getApplication(), url, port);
 
         loginEdit = (EditText) findViewById(R.id.login_account);
         passwordEidt = (EditText) findViewById(R.id.login_password);

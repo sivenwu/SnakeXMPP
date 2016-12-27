@@ -110,6 +110,7 @@ public class SmackMessageManager implements IMessageManager,ChatManagerListener,
         if (mOfflineMessageManager != null){
 
             try {
+
                 if (mOfflineMessageManager.getMessageCount() >0){
 
                   List<Message> messages = mOfflineMessageManager.getMessages();
@@ -120,7 +121,7 @@ public class SmackMessageManager implements IMessageManager,ChatManagerListener,
 
                 }
 
-//                mOfflineMessageManager.deleteMessages();
+                mOfflineMessageManager.deleteMessages();
 
             } catch (Exception e) {
 

@@ -10,7 +10,6 @@ import android.os.Build;
 import android.text.format.Time;
 
 import com.snake.api.apptools.LogTool;
-import com.snake.kit.core.SnakeService;
 import com.snake.kit.core.data.bean.NETSTATE;
 import com.snake.kit.interfaces.SnakeServiceLetterListener;
 
@@ -206,9 +205,9 @@ public class PingPongManager extends BaseManager{
     private class PongTimeoutAlarmReceiver extends BroadcastReceiver {
         public void onReceive(Context ctx, Intent i) {
             LogTool.d("Ping: timeout for " + mPingID);
-            // 超时就注销登录
+            // 超时就尝试自动再次登录
             dealTimeOut();
-            ((SnakeService) context).logout();
+//            ((SnakeService) context).logout();
 
             if (callBack!= null){
                 callBack.pingTimeOut();
@@ -227,6 +226,13 @@ public class PingPongManager extends BaseManager{
 //        if (mPongListener != null){
 //            mConnection.removePacketInterceptor(mPongListener);
 //        }
+    }
+
+    @Override
+    public void releaseManager() {
+        super.releaseManager();
+        cacelPingAlarmService();
+        cacelPongAlarmService();
     }
 
     //----------------------------------------------------------------------------------------------

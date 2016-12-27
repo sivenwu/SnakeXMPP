@@ -95,5 +95,9 @@ public class SmackOnselfManager extends BaseManager implements ISmackOnselfManag
 
     }
 
+    public boolean isLoginNow(){
+        return (mConnection !=null && mConnection.isAuthenticated());
+    }
+
     //------------- ConnectionListener -------------------------------------------------------------
 }

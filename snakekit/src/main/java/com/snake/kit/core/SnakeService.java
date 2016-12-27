@@ -72,7 +72,11 @@ public class SnakeService extends Service implements SnakeServiceLetterListener 
     private boolean isExcuLogin = true;//是否已经执行登录（非是否登录成功)
     private boolean isInitsConnection = false;// 是否初始化了manager
 
+    // Receiver
+    private NetWorkStateReceiver mNetWorkStateReceiver;
+
     // listener
+    private XmppLoginListener mXmppLoginListener;
 
     @Nullable
     @Override
@@ -132,13 +136,16 @@ public class SnakeService extends Service implements SnakeServiceLetterListener 
     // 登录
     public void login(String userName, String password, XmppLoginListener xmppLoginListener) {
 
+        this.mXmppLoginListener = xmppLoginListener;
+
         this.login = userName;
         this.password = password;
 
-        handlerManager.setXmppLoginListener(xmppLoginListener);
-
-        if (mConnection.isConnected()) {
+        if (mConnection!=null && mConnection.isConnected()) {
             try {
+
+                handlerManager.setXmppLoginListener(xmppLoginListener);
+
                 isExcuLogin = true;
                 onselfManager.login(userName, password);
             } catch (Exception e) {
@@ -153,12 +160,14 @@ public class SnakeService extends Service implements SnakeServiceLetterListener 
 
     public void login(){
 
+        handlerManager.setXmppLoginListener(this.mXmppLoginListener);
+
         if (mConnection.isConnected()) {
             try {
                 isExcuLogin = true;
                 onselfManager.login(login, password);
             } catch (Exception e) {
-                handlerManager.handler(SnakeServiceManager.HANDLER_CODE_LOGIN_FAILED,e);
+               sendHandlerLetter(SnakeServiceManager.HANDLER_CODE_LOGIN_FAILED,e);
             }
         }else{
             LogTool.i("登录失败，尝试连接服务器中..");
@@ -169,8 +178,14 @@ public class SnakeService extends Service implements SnakeServiceLetterListener 
 
     // 注销登录
     public void logout() {
+        // 登录状态改变
         isExcuLogin = false;
+
+        // 断开服务连接
         onselfManager.logout();
+
+        // 释放资源
+        releaseManagerService();
     }
 
     // 断开连接
@@ -279,7 +294,7 @@ public class SnakeService extends Service implements SnakeServiceLetterListener 
                     mManagerUtil.notifyChangeData(mConnection);
 
                 if (!isExcuLogin){// 如果没有执行登录，则进行登录操作
-                    onselfManager.login(login,password);
+                    login();
                 }
             }
 
@@ -304,7 +319,6 @@ public class SnakeService extends Service implements SnakeServiceLetterListener 
             @Override
             public void reconnectionSuccessful() {
                 LogTool.d("reconnectionSuccessful");
-                sessionManager.getOfflineMessage();
             }
 
             @Override
@@ -336,7 +350,7 @@ public class SnakeService extends Service implements SnakeServiceLetterListener 
         this.port = port;
 
         if (mConnection == null)
-        initConnection();
+            initConnection();
 
         new Thread(new Runnable() {
             @Override
@@ -348,7 +362,7 @@ public class SnakeService extends Service implements SnakeServiceLetterListener 
 
     private void justConnect() {
         try {
-            if (!mConnection.isConnected())
+            if (!mConnection.isConnected() && !mConnection.isAuthenticated())
                 mConnection.connect();
         } catch (SmackException | IOException | XMPPException e) {
             LogTool.e(e.getMessage().toString());
@@ -359,16 +373,16 @@ public class SnakeService extends Service implements SnakeServiceLetterListener 
     // 注册监听网络状态广播
     private void registerNetWorkStateService(){
         IntentFilter filter=new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
-        NetWorkStateReceiver myReceiver=new NetWorkStateReceiver();
+        mNetWorkStateReceiver =new NetWorkStateReceiver();
 
-        myReceiver.setOnBindNetWorkStateListener(new NetWorkStateReceiver.OnBindNetWorkStateListener() {
+        mNetWorkStateReceiver.setOnBindNetWorkStateListener(new NetWorkStateReceiver.OnBindNetWorkStateListener() {
             @Override
             public void getNetWorkState(NETSTATE netstate) {
                 pingPongManager.updateNetWorkState(netstate);
             }
         });
 
-        this.registerReceiver(myReceiver, filter);
+        this.registerReceiver(mNetWorkStateReceiver, filter);
     }
 
     private void initManager() {
@@ -386,13 +400,39 @@ public class SnakeService extends Service implements SnakeServiceLetterListener 
         mManagerUtil.register(onselfManager);
     }
 
+    private void releaseManager(){
 
+        mManagerUtil.releaseManagers();
+        mManagerUtil = null;
+
+        mucManager = null;
+        rosterManager = null;
+        pingPongManager  = null;
+        sessionManager = null;;
+        onselfManager = null;
+
+    }
+
+    // 释放服务
+    private void releaseManagerService(){
+
+        // 释放心跳服务
+        pingPongManager.releaseManager();
+        // 释放网络状态监听服务
+        this.unregisterReceiver(mNetWorkStateReceiver);
+        // 释放manager 资源
+        mConnection = null;
+        releaseManager();
+
+    }
+
+    // 注册服务
     private void registerManagerService() {
         pingPongManager.registerPongServer();
         pingPongManager.registerCallBack(new PingPongManager.PingPongCallBack() {
             @Override
             public void pingTimeOut() {
-               //.. 暂时不做什么，内部已经实现
+                //.. 暂时不做什么，内部已经实现
             }
 
             @Override
@@ -402,6 +442,9 @@ public class SnakeService extends Service implements SnakeServiceLetterListener 
         });
 
         registerNetWorkStateService();
+
+        sessionManager.getOfflineMessage();
+
         //...
     }
 
