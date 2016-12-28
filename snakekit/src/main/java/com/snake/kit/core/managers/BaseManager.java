@@ -33,6 +33,8 @@ public class BaseManager implements Observer {
         }
     }
 
+    public void releaseManager(){};
+
     public SnakeServiceLetterListener getmLetterListener() {
         return mLetterListener;
     }

@@ -20,5 +20,13 @@
     <Button
         android:id="@+id/send_btn"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:text="send_message"
+        />
+    <Button
+        android:id="@+id/logout_btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="logout"
+        />
 </LinearLayout>

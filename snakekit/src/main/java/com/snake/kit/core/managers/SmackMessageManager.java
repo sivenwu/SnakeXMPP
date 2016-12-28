@@ -3,6 +3,7 @@ package com.snake.kit.core.managers;
 import android.content.Intent;
 import android.os.Bundle;
 
+import com.snake.api.apptools.LogTool;
 import com.snake.api.apptools.SnakeUtilKit;
 import com.snake.api.data.MessageModel;
 import com.snake.kit.apptools.MessageDealUtil;
@@ -15,6 +16,9 @@ import org.jivesoftware.smack.chat.ChatManager;
 import org.jivesoftware.smack.chat.ChatManagerListener;
 import org.jivesoftware.smack.chat.ChatMessageListener;
 import org.jivesoftware.smack.packet.Message;
+import org.jivesoftware.smackx.offline.OfflineMessageManager;
+
+import java.util.List;
 
 /**
  * Created by Yuan on 2016/11/7.
@@ -25,9 +29,14 @@ public class SmackMessageManager implements IMessageManager,ChatManagerListener,
 
     private com.snake.kit.interfaces.ChatMessageListener listener;
     private ChatManager mChatManager;
+    private OfflineMessageManager mOfflineMessageManager;
 
-    public SmackMessageManager(ChatManager mChatManager) {
+
+    public SmackMessageManager(ChatManager mChatManager, OfflineMessageManager mOfflineMessageManager) {
         this.mChatManager = mChatManager;
+        this.mOfflineMessageManager = mOfflineMessageManager;
+
+        getOfflineMessage();
     }
 
     public void setListener(com.snake.kit.interfaces.ChatMessageListener listener) {
@@ -91,6 +100,33 @@ public class SmackMessageManager implements IMessageManager,ChatManagerListener,
             }
 
             mChatManager.addChatListener(this);
+        }
+    }
+
+    public void getOfflineMessage(){
+
+        LogTool.d("获取离线消息..");
+
+        if (mOfflineMessageManager != null){
+
+            try {
+
+                if (mOfflineMessageManager.getMessageCount() >0){
+
+                  List<Message> messages = mOfflineMessageManager.getMessages();
+
+                    for (Message message : messages){
+                        processMessage(null,message);
+                    }
+
+                }
+
+                mOfflineMessageManager.deleteMessages();
+
+            } catch (Exception e) {
+
+                e.printStackTrace();
+            }
         }
     }
 }

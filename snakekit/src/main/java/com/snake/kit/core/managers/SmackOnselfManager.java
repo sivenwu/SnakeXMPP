@@ -9,7 +9,6 @@ import com.snake.kit.interfaces.SnakeServiceLetterListener;
 import org.jivesoftware.smack.AbstractXMPPConnection;
 import org.jivesoftware.smack.PacketCollector;
 import org.jivesoftware.smack.SmackException;
-import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.filter.AndFilter;
 import org.jivesoftware.smack.filter.StanzaFilter;
 import org.jivesoftware.smack.filter.StanzaIdFilter;
@@ -17,7 +16,6 @@ import org.jivesoftware.smack.filter.StanzaTypeFilter;
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smackx.iqregister.packet.Registration;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -56,12 +54,6 @@ public class SmackOnselfManager extends BaseManager implements ISmackOnselfManag
     }
 
     @Override
-    public void logout() {
-        // 目前注销方式 只能断开连接 重新连接登录
-        this.mConnection.disconnect();
-    }
-
-    @Override
     public void registerUser(String account, String password) {
 
         Map<String, String> map = new HashMap<>();
@@ -93,8 +85,18 @@ public class SmackOnselfManager extends BaseManager implements ISmackOnselfManag
     }
 
     @Override
+    public void logout() {
+        // 目前注销方式 只能断开连接 重新连接登录
+        this.mConnection.disconnect();
+    }
+
+    @Override
     public void modifyPassword() {
 
+    }
+
+    public boolean isLoginNow(){
+        return (mConnection !=null && mConnection.isAuthenticated());
     }
 
     //------------- ConnectionListener -------------------------------------------------------------

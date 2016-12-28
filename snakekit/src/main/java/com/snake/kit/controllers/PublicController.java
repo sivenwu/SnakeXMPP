@@ -17,7 +17,7 @@ public class PublicController extends APPController {
     }
 
     // 登出
-    public void logout(){
+    public static void logout(){
         if (!isRunning()){
             return ;
         }
@@ -25,7 +25,7 @@ public class PublicController extends APPController {
     }
 
     // 注册用户
-    public void registerUser(String account, String password){
+    public static void registerUser(String account, String password){
         if (!isRunning()){
             return ;
         }
@@ -33,7 +33,7 @@ public class PublicController extends APPController {
     }
 
     // 修改登录密码
-    public void modifyPassword(){
+    public static void modifyPassword(){
         if (!isRunning()){
             return ;
         }

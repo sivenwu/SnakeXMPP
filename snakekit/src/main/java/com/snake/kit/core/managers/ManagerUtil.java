@@ -22,4 +22,8 @@ public class ManagerUtil extends Observable {
         notifyObservers(obj);
     }
 
+    public void releaseManagers(){
+        this.deleteObservers();
+    }
+
 }
