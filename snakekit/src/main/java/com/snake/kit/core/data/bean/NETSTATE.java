@@ -5,11 +5,6 @@ package com.snake.kit.core.data.bean;
  * Detail 网络状态
  */
 
-
-public enum  NETSTATE {
-
-    STRONG,
-    WEAK,
-    NORMAL;
-
+public enum NETSTATE {
+    STRONG, WEAK, NORMAL
 }

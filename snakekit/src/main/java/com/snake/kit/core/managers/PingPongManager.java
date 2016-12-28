@@ -25,13 +25,11 @@ import org.jivesoftware.smackx.ping.packet.Ping;
 /**
  * Created by Yuan on 2016/11/8.
  * Detail 心跳管理机制
- *
  * normal and strong state: 4G PING(30) PONG (30 + 10)
  * weak state : 2G PING(40) PONG(40+20)
- *
  */
 
-public class PingPongManager extends BaseManager{
+public class PingPongManager extends BaseManager {
 
     // info
     private String mPingID;
@@ -52,8 +50,8 @@ public class PingPongManager extends BaseManager{
     // intent
     private PendingIntent mPongTimeoutAlarmPendIntent;
     private PendingIntent mPingAlarmPendIntent;
-    private Intent mPingAlarmIntent = new Intent(ACTION_HEADER+PING_ALARM);
-    private Intent mPongTimeoutAlarmIntent = new Intent(ACTION_HEADER+PONG_TIMEOUT_ALARM);
+    private Intent mPingAlarmIntent = new Intent(ACTION_HEADER + PING_ALARM);
+    private Intent mPongTimeoutAlarmIntent = new Intent(ACTION_HEADER + PONG_TIMEOUT_ALARM);
 
     // BroadcastReceiver
     private BroadcastReceiver mPongTimeoutAlarmReceiver = new PongTimeoutAlarmReceiver();
@@ -71,20 +69,20 @@ public class PingPongManager extends BaseManager{
     }
 
     // 更新网络状态改变心跳时间
-    public void updateNetWorkState(NETSTATE state){
+    public void updateNetWorkState(NETSTATE state) {
 
-        if (curNetState.equals(state)) return ;
+        if (curNetState.equals(state)) return;
 
         //首先取消闹钟服务
         cacelPingAlarmService();
         cacelPongAlarmService();
 
         curNetState = state;
-        if (curNetState.equals(NETSTATE.NORMAL) || curNetState.equals(NETSTATE.STRONG)){
+        if (curNetState.equals(NETSTATE.NORMAL) || curNetState.equals(NETSTATE.STRONG)) {
             LogTool.d("NORMAL 网络状态切换，心跳机制改变..");
             PING_INTERVAL = 30 * 1000;
             PACKET_TIMEOUT = 10 * 1000;
-        }else {
+        } else {
             LogTool.d("WEAK 网络状态切换，心跳机制改变..");
             PING_INTERVAL = 40 * 1000;
             PACKET_TIMEOUT = 20 * 1000;
@@ -99,7 +97,7 @@ public class PingPongManager extends BaseManager{
     }
 
     // 注册心跳服务
-    public void registerPongServer(){
+    public void registerPongServer() {
 
         mPingID = null;// 初始化ping的id
 
@@ -145,7 +143,7 @@ public class PingPongManager extends BaseManager{
     }
 
     // 发送心跳包
-    private void sendPingPoingPackaget(){
+    private void sendPingPoingPackaget() {
         // 此时说明上一次ping服务器还未回应，直接返回，直到连接超时
         if (mPingID != null) {
             LogTool.d("上一次ping服务器还未回应，上次的pingID： " + mPingID);
@@ -159,7 +157,7 @@ public class PingPongManager extends BaseManager{
         // 此id其实是随机生成，但是唯一的
         mPingID = ping.getStanzaId();
         mPingTimestamp = System.currentTimeMillis();
-        LogTool.d( "发送ping心跳，ID:" + mPingID);
+        LogTool.d("发送ping心跳，ID:" + mPingID);
         // 发送ping消息
         try {
             mConnection.sendStanza(ping);
@@ -188,7 +186,7 @@ public class PingPongManager extends BaseManager{
                 sendPingPoingPackaget();
             } else {
                 LogTool.d("Ping: alarm received, but not auth to server.");
-                if (callBack!= null){
+                if (callBack != null) {
                     LogTool.d("try to login now...");
                     callBack.pingNoneAuthenticated();
                 }
@@ -206,14 +204,14 @@ public class PingPongManager extends BaseManager{
             dealTimeOut();
             ((SnakeService) context).logout();
 
-            if (callBack!= null){
+            if (callBack != null) {
                 callBack.pingTimeOut();
             }
         }
     }
 
     // 释放资源
-    private void dealTimeOut(){
+    private void dealTimeOut() {
 //        cacelPingAlarmService();
         cacelPongAlarmService();
 
@@ -227,41 +225,42 @@ public class PingPongManager extends BaseManager{
 
     //----------------------------------------------------------------------------------------------
 
-    private void getPingAlarmService(){
+    private void getPingAlarmService() {
 
         pingAlarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 
         // 此时需要启动超时判断的闹钟了，时间间隔为PACKET_TIMEOUT秒
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {// api 19以上后 闹钟服务将不准确
 
-            pingAlarmManager .setInexactRepeating(AlarmManager.RTC_WAKEUP,
-                            System.currentTimeMillis() + PING_INTERVAL,
-                            PING_INTERVAL, mPingAlarmPendIntent);
+            pingAlarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP,
+                    System.currentTimeMillis() + PING_INTERVAL,
+                    PING_INTERVAL, mPingAlarmPendIntent);
 
-        }else{
+        } else {
             LogTool.d("getPingAlarmService setExact..");
-            pingAlarmManager.setExact(AlarmManager.RTC_WAKEUP,System.currentTimeMillis()+PING_INTERVAL,mPingAlarmPendIntent);
+            pingAlarmManager.setExact(AlarmManager.RTC_WAKEUP,
+                    System.currentTimeMillis() + PING_INTERVAL, mPingAlarmPendIntent);
         }
     }
 
-    private void cacelPingAlarmService(){
-        if (pingAlarmManager == null){
+    private void cacelPingAlarmService() {
+        if (pingAlarmManager == null) {
             pingAlarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         }
         pingAlarmManager
                 .cancel(mPongTimeoutAlarmPendIntent);// 取消超时闹钟
     }
 
-    private void getPongAlarmService(){
+    private void getPongAlarmService() {
         // 此时需要启动超时判断的闹钟了，时间间隔为PACKET_TIMEOUT秒
         pongAlarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         pongAlarmManager.set(
                 AlarmManager.RTC_WAKEUP, System.currentTimeMillis()
-                        +PACKET_TIMEOUT + PING_INTERVAL, mPongTimeoutAlarmPendIntent);
+                        + PACKET_TIMEOUT + PING_INTERVAL, mPongTimeoutAlarmPendIntent);
     }
 
-    private void cacelPongAlarmService(){
-        if (pongAlarmManager == null){
+    private void cacelPongAlarmService() {
+        if (pongAlarmManager == null) {
             pongAlarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         }
         pongAlarmManager
@@ -270,7 +269,7 @@ public class PingPongManager extends BaseManager{
 
     // ---------- 回调 ----------------------------------------------------------------------------
 
-    public interface PingPongCallBack{
+    public interface PingPongCallBack {
 
         // 超时回调
         public void pingTimeOut();
@@ -281,9 +280,10 @@ public class PingPongManager extends BaseManager{
 
     /**
      * 测试时间 方法
+     *
      * @return
      */
-    private String getTime(){
+    private String getTime() {
         Time time = new Time("GMT+8");
         time.setToNow();
         int year = time.year;

@@ -5,12 +5,9 @@ package com.snake.kit.interfaces;
  * Detail For listener ,Manager send some letters to SnakeService
  */
 
-
 public interface SnakeServiceLetterListener {
 
-    public void sendHandlerLetter(int code);
+    void sendHandlerLetter(int code);
 
-    public void sendHandlerLetter(int code,Object object);
-
-
+    void sendHandlerLetter(int code, Object object);
 }

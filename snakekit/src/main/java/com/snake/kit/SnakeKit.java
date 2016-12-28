@@ -17,6 +17,8 @@ import com.snake.kit.core.SnakeService;
 
 import java.util.Observable;
 
+import cn.snake.dbkit.DBHelper;
+
 
 /**
  * Created by Yuan on 2016/11/4.
@@ -60,6 +62,9 @@ public class SnakeKit extends Observable {
 
         // 服务开始启动...
         startSnakeService(application);
+
+        //数据库初始化
+        DBHelper.init(application,false);
     }
 
     //----------------------------------------------------------------------------------------------
