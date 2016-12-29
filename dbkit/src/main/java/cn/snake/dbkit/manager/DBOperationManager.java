@@ -1,6 +1,11 @@
 package cn.snake.dbkit.manager;
 
+import com.snake.api.exceptions.SnakeRuntimeException;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import cn.snake.dbkit.DBHelper;
 import cn.snake.dbkit.bean.ChatInfoModel;
@@ -28,18 +33,26 @@ public class DBOperationManager {
      * insert one data to db
      *
      * @param object
+     * @return
      */
-    public void insert(Object object) {
+    public long insert(Object object) {
+        if (object == null) throw new SnakeRuntimeException("The current object does not null");
         if (object instanceof ChatInfoModel) {
+            ChatInfoModel chatInfoModel = ((ChatInfoModel) object);
+            chatInfoModel.setUserId(ChatAccountHelper.getUserId());
             ChatInfoModelDao dao = DBHelper.getDaoSession().getChatInfoModelDao();
-            dao.insert((ChatInfoModel) object);
+            return dao.insert(chatInfoModel);
         } else if (object instanceof ContactModel) {
+            ContactModel contactModel = ((ContactModel) object);
+            contactModel.setUserId(ChatAccountHelper.getUserId());
             ContactModelDao dao = DBHelper.getDaoSession().getContactModelDao();
-            dao.insert((ContactModel) object);
+            return dao.insert(contactModel);
         } else if (object instanceof MemberInfo) {
+            MemberInfo memberInfo = ((MemberInfo) object);
+            memberInfo.setUserId(ChatAccountHelper.getUserId());
             MemberInfoDao dao = DBHelper.getDaoSession().getMemberInfoDao();
-            dao.insert((MemberInfo) object);
-        }
+            return dao.insert(memberInfo);
+        } else throw new SnakeRuntimeException("The current object does not exist");
     }
 
     /**
@@ -48,15 +61,25 @@ public class DBOperationManager {
      * @param object
      */
     public void insertList(List<Object> object) {
-        if (object instanceof ChatInfoModel) {
+        if (object.size() == 0) return;
+        if (object.get(0) instanceof ChatInfoModel) {
             ChatInfoModelDao dao = DBHelper.getDaoSession().getChatInfoModelDao();
-            dao.insertInTx((ChatInfoModel) object);
+            List<ChatInfoModel> modelList = new ArrayList<>();
+            for (Object model : object)
+                modelList.add((ChatInfoModel) model);
+            dao.insertInTx(modelList);
         } else if (object instanceof ContactModel) {
             ContactModelDao dao = DBHelper.getDaoSession().getContactModelDao();
-            dao.insertInTx((ContactModel) object);
+            List<ContactModel> modelList = new ArrayList<>();
+            for (Object model : object)
+                modelList.add((ContactModel) model);
+            dao.insertInTx(modelList);
         } else if (object instanceof MemberInfo) {
             MemberInfoDao dao = DBHelper.getDaoSession().getMemberInfoDao();
-            dao.insertInTx((MemberInfo) object);
+            List<MemberInfo> modelList = new ArrayList<>();
+            for (Object model : object)
+                modelList.add((MemberInfo) model);
+            dao.insertInTx(modelList);
         }
     }
 
@@ -68,31 +91,31 @@ public class DBOperationManager {
     public void delete(Object object) {
         if (object instanceof ChatInfoModel) {
             ChatInfoModelDao dao = DBHelper.getDaoSession().getChatInfoModelDao();
-            ChatInfoModel chatInfoModel = dao.queryBuilder()
+            List<ChatInfoModel> modelList = dao.queryBuilder()
                     .where(ChatInfoModelDao.Properties.UserId.eq(ChatAccountHelper.getUserId()),
                             ChatInfoModelDao.Properties.Jid.eq(((ChatInfoModel) object).getJid())
                             , ChatInfoModelDao.Properties.GroupId.eq(((ChatInfoModel) object).getGroupId()))
-                    .unique();
-            if (chatInfoModel != null)
-                dao.deleteByKey(chatInfoModel.get_id());
+                    .list();
+            if (modelList != null)
+                dao.deleteInTx(modelList);
         } else if (object instanceof ContactModel) {
             ContactModelDao dao = DBHelper.getDaoSession().getContactModelDao();
-            ContactModel contactModel = dao.queryBuilder()
+            List<ContactModel> modelList = dao.queryBuilder()
                     .where(ContactModelDao.Properties.UserId.eq(ChatAccountHelper.getUserId()),
                             ContactModelDao.Properties.Jid.eq(((ContactModel) object).getJid()),
                             ContactModelDao.Properties.GroupId.eq(((ContactModel) object).getGroupId()))
-                    .unique();
-            if (contactModel != null)
-                dao.deleteByKey(contactModel.get_id());
+                    .list();
+            if (modelList != null)
+                dao.deleteInTx(modelList);
         } else if (object instanceof MemberInfo) {
             MemberInfoDao dao = DBHelper.getDaoSession().getMemberInfoDao();
-            MemberInfo memberInfo = dao.queryBuilder().
+            List<MemberInfo> modelList = dao.queryBuilder().
                     where(MemberInfoDao.Properties.UserId.eq(ChatAccountHelper.getUserId()),
                             MemberInfoDao.Properties.Jid.eq(((MemberInfo) object).getJid()),
                             MemberInfoDao.Properties.GroupId.eq(((MemberInfo) object).getGroupId()))
-                    .unique();
-            if (memberInfo != null)
-                dao.deleteByKey(memberInfo.get_id());
+                    .list();
+            if (modelList != null)
+                dao.deleteInTx(modelList);
         }
     }
 
@@ -105,10 +128,13 @@ public class DBOperationManager {
         if (object instanceof ChatInfoModel) {
             ChatInfoModelDao dao = DBHelper.getDaoSession().getChatInfoModelDao();
             ChatInfoModel model = dao.queryBuilder()
-                    .where(ChatInfoModelDao.Properties.UserId.eq(ChatAccountHelper.getUserId()),
+                    .where(ChatInfoModelDao.Properties._id.eq(((ChatInfoModel) object).get_id()),
+                            ChatInfoModelDao.Properties.UserId.eq(ChatAccountHelper.getUserId()),
                             ChatInfoModelDao.Properties.Jid.eq(((ChatInfoModel) object).getJid())
                             , ChatInfoModelDao.Properties.GroupId.eq(((ChatInfoModel) object).getGroupId()))
                     .unique();
+            if (model == null)
+                throw new SnakeRuntimeException("update fail , object does not exist");
             ChatInfoModel cacheModel = (ChatInfoModel) object;
             if (cacheModel.getGroupId() != 0)
                 model.setGroupId(cacheModel.getGroupId());
@@ -134,6 +160,8 @@ public class DBOperationManager {
                             ContactModelDao.Properties.Jid.eq(((ContactModel) object).getJid()),
                             ContactModelDao.Properties.GroupId.eq(((ContactModel) object).getGroupId()))
                     .unique();
+            if (model == null)
+                throw new SnakeRuntimeException("update fail , object does not exist");
             ContactModel cacheModel = (ContactModel) object;
             if (cacheModel.getGroupId() != 0)
                 model.setGroupId(cacheModel.getGroupId());
@@ -151,6 +179,8 @@ public class DBOperationManager {
                 model.setHeadPicUrl(cacheModel.getHeadPicUrl());
             if (cacheModel.getMobile() != null)
                 model.setMobile(cacheModel.getMobile());
+            if (cacheModel.getIsOnline() != null)
+                model.setIsOnline(cacheModel.getIsOnline());
             dao.update(model);
         } else if (object instanceof MemberInfo) {
             MemberInfoDao dao = DBHelper.getDaoSession().getMemberInfoDao();
@@ -159,6 +189,8 @@ public class DBOperationManager {
                             MemberInfoDao.Properties.Jid.eq(((MemberInfo) object).getJid()),
                             MemberInfoDao.Properties.GroupId.eq(((MemberInfo) object).getGroupId()))
                     .unique();
+            if (info == null)
+                throw new SnakeRuntimeException("update fail , object does not exist");
             MemberInfo cacheInfo = (MemberInfo) object;
             if (cacheInfo.getGroupId() != 0)
                 info.setGroupId(cacheInfo.getGroupId());
@@ -206,6 +238,21 @@ public class DBOperationManager {
     public int getNewMessageCounts() {
         return DBHelper.getDaoSession().getChatInfoModelDao().queryBuilder().where(
                 ChatInfoModelDao.Properties.UserId.eq(ChatAccountHelper.getUserId()),
+                ChatInfoModelDao.Properties.IsRead.eq("1"))
+                .build().list().size();
+    }
+
+    /**
+     * get does not read message counts who jid
+     * contains only chat and group chat
+     *
+     * @param jid
+     * @return
+     */
+    public int getNewMessageCountsFromJid(String jid) {
+        return DBHelper.getDaoSession().getChatInfoModelDao().queryBuilder().where(
+                ChatInfoModelDao.Properties.UserId.eq(ChatAccountHelper.getUserId()),
+                ChatInfoModelDao.Properties.Jid.eq(jid),
                 ChatInfoModelDao.Properties.IsRead.eq("1"))
                 .build().list().size();
     }
@@ -262,6 +309,20 @@ public class DBOperationManager {
                 ContactModelDao.Properties.Jid.eq(jid),
                 ContactModelDao.Properties.GroupId.eq(-1))
                 .build().list().size() > 0;
+    }
+
+    /**
+     * get db router message
+     *
+     * @return
+     */
+    public static Map<String, Object> getRouterTable() {
+        Map<String, Object> map = new HashMap<>();
+        map.put("ChatInfoModel", "cn.snake.dbkit.bean.ChatInfoModel");
+        map.put("ContactModel", "cn.snake.dbkit.bean.ContactModel");
+        map.put("GroupMemberInfo", "cn.snake.dbkit.bean.GroupMemberInfo");
+        map.put("MemberInfo", "cn.snake.dbkit.bean.MemberInfo");
+        return map;
     }
 
 }

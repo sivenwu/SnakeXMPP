@@ -22,10 +22,11 @@ public class ContactModel {
     public long lastTime;
     public String headPicUrl;
     public String mobile;
-    @Generated(hash = 196618442)
+    public String isOnline;//"true","false"
+    @Generated(hash = 1124439655)
     public ContactModel(Long _id, String userId, int groupId, String groupName,
             String groupHeadPicUrl, String jid, String userName, String lastMessage,
-            long lastTime, String headPicUrl, String mobile) {
+            long lastTime, String headPicUrl, String mobile, String isOnline) {
         this._id = _id;
         this.userId = userId;
         this.groupId = groupId;
@@ -37,6 +38,7 @@ public class ContactModel {
         this.lastTime = lastTime;
         this.headPicUrl = headPicUrl;
         this.mobile = mobile;
+        this.isOnline = isOnline;
     }
     @Generated(hash = 1326690138)
     public ContactModel() {
@@ -52,6 +54,24 @@ public class ContactModel {
     }
     public void setUserId(String userId) {
         this.userId = userId;
+    }
+    public int getGroupId() {
+        return this.groupId;
+    }
+    public void setGroupId(int groupId) {
+        this.groupId = groupId;
+    }
+    public String getGroupName() {
+        return this.groupName;
+    }
+    public void setGroupName(String groupName) {
+        this.groupName = groupName;
+    }
+    public String getGroupHeadPicUrl() {
+        return this.groupHeadPicUrl;
+    }
+    public void setGroupHeadPicUrl(String groupHeadPicUrl) {
+        this.groupHeadPicUrl = groupHeadPicUrl;
     }
     public String getJid() {
         return this.jid;
@@ -89,23 +109,11 @@ public class ContactModel {
     public void setMobile(String mobile) {
         this.mobile = mobile;
     }
-    public int getGroupId() {
-        return this.groupId;
+    public String getIsOnline() {
+        return this.isOnline;
     }
-    public void setGroupId(int groupId) {
-        this.groupId = groupId;
-    }
-    public String getGroupName() {
-        return this.groupName;
-    }
-    public void setGroupName(String groupName) {
-        this.groupName = groupName;
-    }
-    public String getGroupHeadPicUrl() {
-        return this.groupHeadPicUrl;
-    }
-    public void setGroupHeadPicUrl(String groupHeadPicUrl) {
-        this.groupHeadPicUrl = groupHeadPicUrl;
+    public void setIsOnline(String isOnline) {
+        this.isOnline = isOnline;
     }
 
 }

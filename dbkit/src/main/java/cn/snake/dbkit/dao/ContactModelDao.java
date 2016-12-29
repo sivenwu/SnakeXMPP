@@ -35,6 +35,7 @@ public class ContactModelDao extends AbstractDao<ContactModel, Long> {
         public final static Property LastTime = new Property(8, long.class, "lastTime", false, "LAST_TIME");
         public final static Property HeadPicUrl = new Property(9, String.class, "headPicUrl", false, "HEAD_PIC_URL");
         public final static Property Mobile = new Property(10, String.class, "mobile", false, "MOBILE");
+        public final static Property IsOnline = new Property(11, String.class, "isOnline", false, "IS_ONLINE");
     }
 
 
@@ -60,7 +61,8 @@ public class ContactModelDao extends AbstractDao<ContactModel, Long> {
                 "\"LAST_MESSAGE\" TEXT," + // 7: lastMessage
                 "\"LAST_TIME\" INTEGER NOT NULL ," + // 8: lastTime
                 "\"HEAD_PIC_URL\" TEXT," + // 9: headPicUrl
-                "\"MOBILE\" TEXT);"); // 10: mobile
+                "\"MOBILE\" TEXT," + // 10: mobile
+                "\"IS_ONLINE\" TEXT);"); // 11: isOnline
     }
 
     /** Drops the underlying database table. */
@@ -119,6 +121,11 @@ public class ContactModelDao extends AbstractDao<ContactModel, Long> {
         if (mobile != null) {
             stmt.bindString(11, mobile);
         }
+ 
+        String isOnline = entity.getIsOnline();
+        if (isOnline != null) {
+            stmt.bindString(12, isOnline);
+        }
     }
 
     @Override
@@ -171,6 +178,11 @@ public class ContactModelDao extends AbstractDao<ContactModel, Long> {
         if (mobile != null) {
             stmt.bindString(11, mobile);
         }
+ 
+        String isOnline = entity.getIsOnline();
+        if (isOnline != null) {
+            stmt.bindString(12, isOnline);
+        }
     }
 
     @Override
@@ -191,7 +203,8 @@ public class ContactModelDao extends AbstractDao<ContactModel, Long> {
             cursor.isNull(offset + 7) ? null : cursor.getString(offset + 7), // lastMessage
             cursor.getLong(offset + 8), // lastTime
             cursor.isNull(offset + 9) ? null : cursor.getString(offset + 9), // headPicUrl
-            cursor.isNull(offset + 10) ? null : cursor.getString(offset + 10) // mobile
+            cursor.isNull(offset + 10) ? null : cursor.getString(offset + 10), // mobile
+            cursor.isNull(offset + 11) ? null : cursor.getString(offset + 11) // isOnline
         );
         return entity;
     }
@@ -209,6 +222,7 @@ public class ContactModelDao extends AbstractDao<ContactModel, Long> {
         entity.setLastTime(cursor.getLong(offset + 8));
         entity.setHeadPicUrl(cursor.isNull(offset + 9) ? null : cursor.getString(offset + 9));
         entity.setMobile(cursor.isNull(offset + 10) ? null : cursor.getString(offset + 10));
+        entity.setIsOnline(cursor.isNull(offset + 11) ? null : cursor.getString(offset + 11));
      }
     
     @Override

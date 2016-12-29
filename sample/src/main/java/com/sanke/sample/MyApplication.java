@@ -14,7 +14,7 @@ public class MyApplication extends Application{
     private String url = "yyssqe.oicp.net";
     private int port = 25196;
 
-//    private String url = "192.168.1.101";
+//    private String url = "192.168.244.6";
 //    private int port = 5222;
 
     @Override

@@ -1,1 +1,1 @@
-include ':sample', ':snakekit', ':dbkit', ':dbsample', ':snakeapi'
+include ':sample', ':snakekit', ':dbkit', ':dbsample', ':snakeapi', ':snakeviewkit', ':snakeviewsample'

@@ -25,7 +25,7 @@ public class ChatInfoModel {
     public int groupId;//群id , -1 -> does not group chat
     public String jid;//群聊时且为本人信息时， jid = userId
     public String type;//text,picture,voice,video
-    public String isFrom;//是否来自对方
+    public String isFrom;//是否来自对方,"true","false"
     public int isRead;//1->read,2->dose not read
     public String message; //content
     private String state;//commom , inputing
@@ -130,4 +130,5 @@ public class ChatInfoModel {
     public void setMessageStatus(String messageStatus) {
         this.messageStatus = messageStatus;
     }
+
 }

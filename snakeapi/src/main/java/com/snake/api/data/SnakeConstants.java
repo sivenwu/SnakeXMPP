@@ -6,6 +6,9 @@ package com.snake.api.data;
  */
 
 public class SnakeConstants {
+    public static String COMMON_STRING_TRUE = "true";
+
+    public static String COMMON_STRING_FALSE = "false";
 
     public static String MESSAGE_USER_ID = "userId";
 
