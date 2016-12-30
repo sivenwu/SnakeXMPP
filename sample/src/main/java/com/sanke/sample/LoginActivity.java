@@ -13,7 +13,7 @@ import com.snake.kit.interfaces.XmppLoginListener;
 
 public class LoginActivity extends AppCompatActivity {
 
-    private String name = "chenyk2";
+    private String name = "siven02";
     private String password = "123";
 
 //    private String name = "siven";

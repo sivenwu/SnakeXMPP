@@ -12,6 +12,9 @@ import java.io.IOException;
 
 public interface ISmackOnselfManager {
 
+    // 连接配置
+    public void connectionConfig();
+
     // 登录
     public void login() throws Exception ;
     public void login(String account,String password) throws IOException, XMPPException, SmackException, Exception;

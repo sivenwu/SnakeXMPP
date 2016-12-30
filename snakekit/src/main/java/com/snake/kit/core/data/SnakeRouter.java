@@ -1,14 +1,16 @@
 package com.snake.kit.core.data;
 
 import android.content.Context;
+import android.util.ArrayMap;
 
-import com.snake.db.SnakeDbKit;
+import com.snake.api.apptools.LogTool;
 import com.snake.db.Test;
 import com.snake.kit.core.data.bean.ACTION;
 import com.snake.kit.core.data.bean.TargetSupport;
 
-import java.util.HashMap;
 import java.util.Map;
+
+import cn.snake.dbkit.manager.DBOperationManager;
 
 /**
  * Created by Yuan on 2016/12/11.
@@ -28,9 +30,9 @@ public class SnakeRouter {
     private Map<String,Object> objCache;
 
     public SnakeRouter() {
-        this.actionSupports = new HashMap<>();
-        this.actionKits = new HashMap<>();
-        this.objCache = new HashMap<>();
+        this.actionSupports = new ArrayMap<>();
+        this.actionKits = new ArrayMap<>();
+        this.objCache = new ArrayMap<>();
         init();
         displayKit();
     }
@@ -50,6 +52,10 @@ public class SnakeRouter {
     }
 
     //---- public ---------------------------------------------------------------------------------
+
+    public Object dbObject(String name){
+        return getObject(ACTION.DB,name);
+    }
 
     /**
      * 获取对象入口
@@ -89,7 +95,7 @@ public class SnakeRouter {
     private void init(){
 
         // 配置jar 入口
-        actionKits.put(ACTION.DB,"com.snake.db.SnakeDbKit");// 数据库引用
+        actionKits.put(ACTION.DB,"cn.snake.dbkit.manager.DBOperationManager");// 数据库引用
     }
 
     private void displayKit(){
@@ -108,11 +114,15 @@ public class SnakeRouter {
 
         TargetSupport support = null;
 
-        if (router instanceof SnakeDbKit){
-            SnakeDbKit mSnakeDbKit = (SnakeDbKit) router;
+        if (router instanceof DBOperationManager){
+
+            LogTool.d("RouterTable from DBOperationManager");
+
+            DBOperationManager mSnakeDbKit = (DBOperationManager) router;
 
             support = new TargetSupport();
             support.putObjectsPath(mSnakeDbKit.getRouterTable());
+            LogTool.d("RouterTable is" + mSnakeDbKit.getRouterTable().toString());
 
             actionSupports.put(ACTION.DB,support);
         }

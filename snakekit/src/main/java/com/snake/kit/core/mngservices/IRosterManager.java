@@ -1,5 +1,7 @@
 package com.snake.kit.core.mngservices;
 
+import com.snake.kit.interfaces.ISnakeRosterListener;
+
 import org.jivesoftware.smack.roster.Roster;
 
 /**
@@ -13,7 +15,7 @@ public interface IRosterManager {
     void setSubscriptionMode(Roster.SubscriptionMode subscriptionMode);
 
     // 获取所有好友以及列表
-    void getAllRosters();
+    void getAllRosters(ISnakeRosterListener iSnakeRosterListener);
 
     // 删除好友
     void deleteRoster(String user);

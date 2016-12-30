@@ -8,6 +8,7 @@ import com.snake.kit.interfaces.SnakeServiceLetterListener;
 
 import org.jivesoftware.smack.AbstractXMPPConnection;
 import org.jivesoftware.smack.PacketCollector;
+import org.jivesoftware.smack.ReconnectionManager;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.filter.AndFilter;
 import org.jivesoftware.smack.filter.StanzaFilter;
@@ -26,13 +27,23 @@ import java.util.Map;
 
 public class SmackOnselfManager extends BaseManager implements ISmackOnselfManager {
 
+    private ReconnectionManager mReconnectionManager;
+
     private String curAccount;
     private String curPassword;
 
     public SmackOnselfManager(Context context, SnakeServiceLetterListener mLetterListener, AbstractXMPPConnection mConnection) {
         super(context, mLetterListener, mConnection);
+
+        mReconnectionManager = ReconnectionManager.getInstanceFor(mConnection);
+        mReconnectionManager.enableAutomaticReconnection();
     }
 
+
+    @Override
+    public void connectionConfig() {
+
+    }
 
     @Override
     public void login() throws Exception {
@@ -47,7 +58,6 @@ public class SmackOnselfManager extends BaseManager implements ISmackOnselfManag
 
         try {
             this.mConnection.login(account,password);
-
         } catch (Exception e) {
             getmLetterListener().sendHandlerLetter(SnakeServiceManager.HANDLER_CODE_LOGIN_FAILED,e);
         }

@@ -4,9 +4,13 @@ import android.os.Handler;
 import android.os.Message;
 
 import com.snake.kit.core.SnakeService;
+import com.snake.kit.interfaces.ISnakeRosterListener;
 import com.snake.kit.interfaces.XmppLoginListener;
 
 import java.lang.ref.WeakReference;
+import java.util.List;
+
+import cn.snake.dbkit.bean.ContactModel;
 
 /**
  * Created by Yuan on 2016/12/24.
@@ -19,9 +23,11 @@ public class SnakeServiceManager {
     private SnakeServiceHandler handler;
     private Object curHandlerObject;
 
+
     // Handler CODE
     public static final int HANDLER_CODE_LOGIN_SUCCESS = 0X01;
     public static final int HANDLER_CODE_LOGIN_FAILED = 0X02;
+    public static final int HANDLLER_CODE_GET_ROSETER = 0X03;
 
 
     // Listenter
@@ -30,6 +36,10 @@ public class SnakeServiceManager {
         this.mWfXmppLoginListener = new WeakReference<XmppLoginListener>(mXmppLoginListener);
     }
 
+    private WeakReference<ISnakeRosterListener> mWfISnakeRosterListener;
+    public void setISnakeRosterListener(ISnakeRosterListener mISnakeRosterListener) {
+        this.mWfISnakeRosterListener = new WeakReference<ISnakeRosterListener>(mISnakeRosterListener);
+    }
 
     public SnakeServiceManager(SnakeService snakeService) {
         this.handler = new SnakeServiceHandler(snakeService){
@@ -41,6 +51,9 @@ public class SnakeServiceManager {
                         break;
                     case HANDLER_CODE_LOGIN_FAILED:
                         loginFailed();
+                        break;
+                    case HANDLLER_CODE_GET_ROSETER:
+                        getRoster();
                         break;
                 }
             }
@@ -86,6 +99,19 @@ public class SnakeServiceManager {
                 this.mWfXmppLoginListener.get().onError(null, "");
             }
             this.mWfXmppLoginListener.clear();// 回收
+        }
+    }
+
+    private void getRoster(){
+        if (this.mWfISnakeRosterListener.get() != null){
+            if (curHandlerObject != null){
+                List<ContactModel> contactModels = (List<ContactModel>) curHandlerObject;
+                if (contactModels != null){
+                    this.mWfISnakeRosterListener.get().rosterEntires(contactModels);
+                }
+            }
+
+            this.mWfISnakeRosterListener.clear();
         }
     }
 

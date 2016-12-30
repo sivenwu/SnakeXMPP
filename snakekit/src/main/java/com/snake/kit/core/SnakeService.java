@@ -22,6 +22,7 @@ import com.snake.kit.core.managers.SmackRosterManager;
 import com.snake.kit.core.managers.SmackSessionManager;
 import com.snake.kit.core.receivers.NetWorkStateReceiver;
 import com.snake.kit.interfaces.ChatMessageListener;
+import com.snake.kit.interfaces.ISnakeRosterListener;
 import com.snake.kit.interfaces.SnakeServiceLetterListener;
 import com.snake.kit.interfaces.XmppLoginListener;
 
@@ -77,6 +78,7 @@ public class SnakeService extends Service implements SnakeServiceLetterListener 
 
     // listener
     private XmppLoginListener mXmppLoginListener;
+    private ISnakeRosterListener mISnakeRosterListener;
 
     @Nullable
     @Override
@@ -118,6 +120,7 @@ public class SnakeService extends Service implements SnakeServiceLetterListener 
         }
     }
 
+
     // binder for snackService
     public class SnackBinder extends Binder {
         public SnakeService getService() {
@@ -142,15 +145,10 @@ public class SnakeService extends Service implements SnakeServiceLetterListener 
         this.password = password;
 
         if (mConnection!=null && mConnection.isConnected()) {
-            try {
-
                 handlerManager.setXmppLoginListener(xmppLoginListener);
 
                 isExcuLogin = true;
                 onselfManager.login(userName, password);
-            } catch (Exception e) {
-                handlerManager.handler(SnakeServiceManager.HANDLER_CODE_LOGIN_FAILED,e);
-            }
         }else{
             LogTool.i("登录失败，尝试连接服务器中..");
             isExcuLogin = false;
@@ -163,12 +161,8 @@ public class SnakeService extends Service implements SnakeServiceLetterListener 
         handlerManager.setXmppLoginListener(this.mXmppLoginListener);
 
         if (mConnection.isConnected()) {
-            try {
                 isExcuLogin = true;
                 onselfManager.login(login, password);
-            } catch (Exception e) {
-               sendHandlerLetter(SnakeServiceManager.HANDLER_CODE_LOGIN_FAILED,e);
-            }
         }else{
             LogTool.i("登录失败，尝试连接服务器中..");
             isExcuLogin = false;
@@ -209,8 +203,9 @@ public class SnakeService extends Service implements SnakeServiceLetterListener 
     /**
      * 好友管理调用方法
      *****************************************************************************/
-    public void getAllRosters() {
-        rosterManager.getAllRosters();
+    public void getAllRosters(ISnakeRosterListener i) {
+        handlerManager.setISnakeRosterListener(i);
+        rosterManager.getAllRosters(i);
     }
 
     public void addRoster(String user, String name, String groupName) {
@@ -279,6 +274,7 @@ public class SnakeService extends Service implements SnakeServiceLetterListener 
                 .setPort(this.port)
                 .setServiceName(this.server)
                 .setSendPresence(true)// support presence
+                .setUsernameAndPassword("账号","密码")
                 .setConnectTimeout(1000 * 10)
 //                    .setUsernameAndPassword(this.login,this.password)
                 .setSecurityMode(ConnectionConfiguration.SecurityMode.disabled)//越过证书

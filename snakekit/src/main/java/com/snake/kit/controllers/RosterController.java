@@ -1,5 +1,7 @@
 package com.snake.kit.controllers;
 
+import com.snake.kit.interfaces.ISnakeRosterListener;
+
 import org.jivesoftware.smack.roster.Roster;
 
 /**
@@ -9,9 +11,9 @@ import org.jivesoftware.smack.roster.Roster;
 
 public final class RosterController extends APPController{
 
-    public static void getAllRosters(){
+    public static void getAllRosters(ISnakeRosterListener i){
         if (isRunning())
-            getmSnakeService().getAllRosters();
+            getmSnakeService().getAllRosters(i);
     }
 
     public static void addRoster(String user,String name,String groupName) {

@@ -10,4 +10,5 @@ public interface SnakeServiceLetterListener {
     void sendHandlerLetter(int code);
 
     void sendHandlerLetter(int code, Object object);
+
 }
