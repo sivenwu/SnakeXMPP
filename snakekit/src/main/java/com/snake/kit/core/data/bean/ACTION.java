@@ -7,6 +7,7 @@ package com.snake.kit.core.data.bean;
 
 public enum  ACTION {
 
-    DB;
+    DB,
+    VIEW;
 
 }

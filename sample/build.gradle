@@ -23,9 +23,25 @@ dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:23.1.1'
+
+    // smack lib 测试 非打包
     compile project(':snakekit')
 //    //    compile project(':dbkit')
-//    compile files('libs/dblib.jar')
-////    compile files('libs/snake.jar')
+
+//    //smack lib 正式打包测试 可以忽略
+//    compile 'org.igniterealtime.smack:smack-android:4.1.8'
+//    // Optional for XMPPTCPConnection
+//    compile 'org.igniterealtime.smack:smack-tcp:4.1.8'
+//    // Optional for XMPP-IM (RFC 6121) support (Roster, Threaded Chats, …)
+//    compile 'org.igniterealtime.smack:smack-im:4.1.8'
+//    // Optional for XMPP extensions support
+//    compile 'org.igniterealtime.smack:smack-extensions:4.1.8'
+//
+////    compile 'org.greenrobot:greendao:3.2.0'//for greendao
+//
+//    compile files('libs/snakecore.jar')
 //    compile files('libs/snakeapi.jar')
+//    compile files('libs/snakedb.jar')
+//
+//    compile files('libs/gson-2.2.4.jar')
 }

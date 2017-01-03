@@ -40,7 +40,7 @@ public class SmackRosterManager extends BaseManager implements IRosterManager, R
     //    private SparseArray mUserList; // key ：（主键） value ：jid
     private ArrayMap mUserList;
 
-
+    private DBOperationManager dbOperationManager;
 
     public SmackRosterManager(Context context, SnakeServiceLetterListener mLetterListener, AbstractXMPPConnection mConnection) {
         super(context, mLetterListener, mConnection);
@@ -48,6 +48,9 @@ public class SmackRosterManager extends BaseManager implements IRosterManager, R
         // 默认添加好友需要询问
         mRoster.setSubscriptionMode(Roster.SubscriptionMode.manual);
         mUserList = new ArrayMap();
+
+        // 初始化数据库操作
+        initDbOperationManager();
     }
 
 
@@ -84,7 +87,7 @@ public class SmackRosterManager extends BaseManager implements IRosterManager, R
             mUserList.put(jid,contactModel);
 
             // 更新数据库
-            DBOperationManager.get().update(contactModel);
+            updateContact(contactModel);
         }else{
             Object obj = buildContact();
             if (obj != null) {
@@ -95,7 +98,7 @@ public class SmackRosterManager extends BaseManager implements IRosterManager, R
 
             mUserList.put(jid,contactModel);
             // 更新数据库
-            DBOperationManager.get().update(contactModel);
+            updateContact(contactModel);
         }
 
     }
@@ -134,8 +137,7 @@ public class SmackRosterManager extends BaseManager implements IRosterManager, R
                     contactModel.setIsOnline(Boolean.toString(isAvailable));
                     // 设置状态
                     long userId = 0L;
-                    userId =  DBOperationManager.get().insert(contactModel);
-                    LogTool.d("插入数据库状态: " + userId);
+                    addContact(contactModel);
 
 //                    mUserList.put((int) userId,entry);
                     mUserList.put(entry.getUser(),contactModel);
@@ -177,7 +179,7 @@ public class SmackRosterManager extends BaseManager implements IRosterManager, R
                 if (mUserList.containsKey(user)) mUserList.remove(user);
                 mRoster.removeEntry(entry);
                 // 删除数据库
-                DBOperationManager.get().delete(mUserList.get(user));
+                deleteContact((ContactModel) mUserList.get(user));
             } catch (SmackException.NotLoggedInException |
                     SmackException.NoResponseException |
                     XMPPException.XMPPErrorException |
@@ -204,7 +206,7 @@ public class SmackRosterManager extends BaseManager implements IRosterManager, R
                     model.setUserName(name);
                     model.setGroupName(groupName[0]);
 
-                    DBOperationManager.get().insert(model);
+                    addContact(model);
                     mUserList.put(user,model);
                 }
 
@@ -317,6 +319,34 @@ public class SmackRosterManager extends BaseManager implements IRosterManager, R
 
     private Object buildContact(){
         return SnakeRouter.instance().dbObject("ContactModel");
+    }
+
+    // -- db opreation
+    private void updateContact(ContactModel contactModel){
+        if (isUseDblibrary()){
+            dbOperationManager.update(contactModel);
+        }
+    }
+
+    private void addContact(ContactModel contactModel){
+        if (isUseDblibrary()){
+            dbOperationManager.update(contactModel);
+        }
+    }
+
+    private void deleteContact(ContactModel contactModel){
+        if (isUseDblibrary()){
+            dbOperationManager.delete(contactModel);
+        }
+    }
+
+    private void initDbOperationManager(){
+        if (SnakeRouter.instance().isUseDbLibrary())
+            dbOperationManager = SnakeRouter.instance().getDbLibarayKit();
+    }
+
+    private boolean isUseDblibrary(){
+        return SnakeRouter.instance().isUseDbLibrary();
     }
 
 }

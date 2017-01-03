@@ -6,9 +6,6 @@ import android.widget.Toast;
 import com.snake.api.data.MessageModel;
 import com.snake.kit.core.receivers.MessageReceiver;
 
-import cn.snake.dbkit.bean.ChatInfoModel;
-import cn.snake.dbkit.helper.ChatAccountHelper;
-import cn.snake.dbkit.manager.DBOperationManager;
 
 /**
  * Created by Yuan on 2016/11/29.
@@ -19,12 +16,12 @@ public class MyMessageReceiver extends MessageReceiver {
 
     @Override
     public void onMessage(Context context, MessageModel message, String messag) {
-        ChatInfoModel model = new ChatInfoModel();
-        model.setType(message.getType());
-        model.setUserId(ChatAccountHelper.getUserId());
-        model.setJid(message.getFrom());
-        model.setMessage(message.getBody());
-        DBOperationManager.get().insert(model);
+//        ChatInfoModel model = new ChatInfoModel();
+//        model.setType(message.getType());
+//        model.setUserId(ChatAccountHelper.getUserId());
+//        model.setJid(message.getFrom());
+//        model.setMessage(message.getBody());
+//        DBOperationManager.get().insert(model);
         Toast.makeText(context, messag, Toast.LENGTH_SHORT).show();
     }
 }

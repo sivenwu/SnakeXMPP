@@ -14,6 +14,7 @@ import com.snake.kit.controllers.PublicController;
 import com.snake.kit.controllers.RosterController;
 import com.snake.kit.controllers.SessionController;
 import com.snake.kit.core.SnakeService;
+import com.snake.kit.core.data.SnakeRouter;
 
 import java.util.Observable;
 
@@ -64,6 +65,7 @@ public class SnakeKit extends Observable {
         startSnakeService(application);
 
         //数据库初始化
+        if (SnakeRouter.instance().isUseDbLibrary())
         DBHelper.init(application,false);
     }
 
