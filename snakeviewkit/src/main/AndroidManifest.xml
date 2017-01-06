@@ -7,7 +7,19 @@
         android:supportsRtl="true">
         <activity
             android:name=".activity.SnakeChatActivity"
-            android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
+            android:launchMode="singleTask"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".activity.SnakeSessionActivity"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".activity.SnakeContactActivity"
+            android:launchMode="singleTask"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".activity.ContactInfoActivity"
+            android:launchMode="singleTask"
+            android:windowSoftInputMode="adjustResize" />
     </application>
 
 </manifest>

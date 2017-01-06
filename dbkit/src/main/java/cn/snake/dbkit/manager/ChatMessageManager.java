@@ -7,6 +7,7 @@ import cn.snake.dbkit.bean.ChatInfoModel;
  * 聊天消息管理类
  */
 
+
 public class ChatMessageManager {
     public void sendMessage(int type) {
         // TODO: 2016/12/29 发送聊天消息

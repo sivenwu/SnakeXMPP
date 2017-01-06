@@ -50,9 +50,9 @@ public class ChatInfoModelDao extends AbstractDao<ChatInfoModel, Long> {
         String constraint = ifNotExists? "IF NOT EXISTS ": "";
         db.execSQL("CREATE TABLE " + constraint + "\"CHAT_INFO_MODEL\" (" + //
                 "\"_id\" INTEGER PRIMARY KEY AUTOINCREMENT ," + // 0: _id
-                "\"USER_ID\" TEXT," + // 1: userId
+                "\"USER_ID\" TEXT NOT NULL ," + // 1: userId
                 "\"GROUP_ID\" INTEGER NOT NULL ," + // 2: groupId
-                "\"JID\" TEXT," + // 3: jid
+                "\"JID\" TEXT NOT NULL ," + // 3: jid
                 "\"TYPE\" TEXT," + // 4: type
                 "\"IS_FROM\" TEXT," + // 5: isFrom
                 "\"IS_READ\" INTEGER NOT NULL ," + // 6: isRead
@@ -75,17 +75,9 @@ public class ChatInfoModelDao extends AbstractDao<ChatInfoModel, Long> {
         if (_id != null) {
             stmt.bindLong(1, _id);
         }
- 
-        String userId = entity.getUserId();
-        if (userId != null) {
-            stmt.bindString(2, userId);
-        }
+        stmt.bindString(2, entity.getUserId());
         stmt.bindLong(3, entity.getGroupId());
- 
-        String jid = entity.getJid();
-        if (jid != null) {
-            stmt.bindString(4, jid);
-        }
+        stmt.bindString(4, entity.getJid());
  
         String type = entity.getType();
         if (type != null) {
@@ -122,17 +114,9 @@ public class ChatInfoModelDao extends AbstractDao<ChatInfoModel, Long> {
         if (_id != null) {
             stmt.bindLong(1, _id);
         }
- 
-        String userId = entity.getUserId();
-        if (userId != null) {
-            stmt.bindString(2, userId);
-        }
+        stmt.bindString(2, entity.getUserId());
         stmt.bindLong(3, entity.getGroupId());
- 
-        String jid = entity.getJid();
-        if (jid != null) {
-            stmt.bindString(4, jid);
-        }
+        stmt.bindString(4, entity.getJid());
  
         String type = entity.getType();
         if (type != null) {
@@ -170,9 +154,9 @@ public class ChatInfoModelDao extends AbstractDao<ChatInfoModel, Long> {
     public ChatInfoModel readEntity(Cursor cursor, int offset) {
         ChatInfoModel entity = new ChatInfoModel( //
             cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0), // _id
-            cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1), // userId
+            cursor.getString(offset + 1), // userId
             cursor.getInt(offset + 2), // groupId
-            cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3), // jid
+            cursor.getString(offset + 3), // jid
             cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4), // type
             cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5), // isFrom
             cursor.getInt(offset + 6), // isRead
@@ -186,9 +170,9 @@ public class ChatInfoModelDao extends AbstractDao<ChatInfoModel, Long> {
     @Override
     public void readEntity(Cursor cursor, ChatInfoModel entity, int offset) {
         entity.set_id(cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0));
-        entity.setUserId(cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1));
+        entity.setUserId(cursor.getString(offset + 1));
         entity.setGroupId(cursor.getInt(offset + 2));
-        entity.setJid(cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3));
+        entity.setJid(cursor.getString(offset + 3));
         entity.setType(cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4));
         entity.setIsFrom(cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5));
         entity.setIsRead(cursor.getInt(offset + 6));

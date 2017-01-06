@@ -23,10 +23,12 @@ public class ContactModel {
     public String headPicUrl;
     public String mobile;
     public String isOnline;//"true","false"
-    @Generated(hash = 1124439655)
+    public int viewTop;//0 -> default，1 -> top
+    @Generated(hash = 1622488505)
     public ContactModel(Long _id, String userId, int groupId, String groupName,
             String groupHeadPicUrl, String jid, String userName, String lastMessage,
-            long lastTime, String headPicUrl, String mobile, String isOnline) {
+            long lastTime, String headPicUrl, String mobile, String isOnline,
+            int viewTop) {
         this._id = _id;
         this.userId = userId;
         this.groupId = groupId;
@@ -39,6 +41,7 @@ public class ContactModel {
         this.headPicUrl = headPicUrl;
         this.mobile = mobile;
         this.isOnline = isOnline;
+        this.viewTop = viewTop;
     }
     @Generated(hash = 1326690138)
     public ContactModel() {
@@ -115,5 +118,10 @@ public class ContactModel {
     public void setIsOnline(String isOnline) {
         this.isOnline = isOnline;
     }
-
+    public int getViewTop() {
+        return this.viewTop;
+    }
+    public void setViewTop(int viewTop) {
+        this.viewTop = viewTop;
+    }
 }

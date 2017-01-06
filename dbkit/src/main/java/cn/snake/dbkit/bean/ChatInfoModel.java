@@ -2,6 +2,7 @@ package cn.snake.dbkit.bean;
 
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Id;
+import org.greenrobot.greendao.annotation.NotNull;
 import org.greenrobot.greendao.annotation.Generated;
 
 /**
@@ -10,10 +11,10 @@ import org.greenrobot.greendao.annotation.Generated;
  */
 @Entity
 public class ChatInfoModel {
-    public static final int TYPE_TEXT = 1;//文字消息
-    public static final int TYPE_PICTURE = 2;//图片消息
-    public static final int TYPE_VOICE = 3;//语音消息
-    public static final int TYPE_VIDEO = 4;//视频消息
+    public static final String TYPE_TEXT = "1";//文字消息
+    public static final String TYPE_PICTURE = "2";//图片消息
+    public static final String TYPE_VOICE = "3";//语音消息
+    public static final String TYPE_VIDEO = "4";//视频消息
 
     public static final int STATUS_SEND_FAIL = 1;
     public static final int STATUS_SEND_SENDING = 2;
@@ -21,8 +22,10 @@ public class ChatInfoModel {
 
     @Id(autoincrement = true)
     public Long _id;
+    @NotNull
     public String userId;//用户id
     public int groupId;//群id , -1 -> does not group chat
+    @NotNull
     public String jid;//群聊时且为本人信息时， jid = userId
     public String type;//text,picture,voice,video
     public String isFrom;//是否来自对方,"true","false"
@@ -31,10 +34,10 @@ public class ChatInfoModel {
     private String state;//commom , inputing
     public String messageStatus; //send success: "3" , send fail:"1" ,sending: "2"
 
-    @Generated(hash = 1029089737)
-    public ChatInfoModel(Long _id, String userId, int groupId, String jid,
-                         String type, String isFrom, int isRead, String message, String state,
-                         String messageStatus) {
+    @Generated(hash = 2094344738)
+    public ChatInfoModel(Long _id, @NotNull String userId, int groupId,
+                         @NotNull String jid, String type, String isFrom, int isRead,
+                         String message, String state, String messageStatus) {
         this._id = _id;
         this.userId = userId;
         this.groupId = groupId;

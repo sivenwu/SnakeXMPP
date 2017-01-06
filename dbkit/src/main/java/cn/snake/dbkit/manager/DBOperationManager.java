@@ -68,13 +68,13 @@ public class DBOperationManager {
             for (Object model : object)
                 modelList.add((ChatInfoModel) model);
             dao.insertInTx(modelList);
-        } else if (object instanceof ContactModel) {
+        } else if (object.get(0) instanceof ContactModel) {
             ContactModelDao dao = DBHelper.getDaoSession().getContactModelDao();
             List<ContactModel> modelList = new ArrayList<>();
             for (Object model : object)
                 modelList.add((ContactModel) model);
             dao.insertInTx(modelList);
-        } else if (object instanceof MemberInfo) {
+        } else if (object.get(0) instanceof MemberInfo) {
             MemberInfoDao dao = DBHelper.getDaoSession().getMemberInfoDao();
             List<MemberInfo> modelList = new ArrayList<>();
             for (Object model : object)
@@ -117,6 +117,18 @@ public class DBOperationManager {
             if (modelList != null)
                 dao.deleteInTx(modelList);
         }
+    }
+
+    /**
+     * 将联系人/群聊置顶
+     *
+     * @param jid
+     */
+    public void updateContactViewTop(String jid) {
+        ContactModel model = new ContactModel();
+        model.setJid(jid);
+        model.setViewTop(1);
+        update(model);
     }
 
     /**
@@ -286,14 +298,30 @@ public class DBOperationManager {
 
     /**
      * get 会话 list 按时间排序
-     * contains only chat and group chat
+     * only chat 只有单聊，群聊先不考虑
      *
      * @return
      */
     public List<ContactModel> getSessionList() {
+        // TODO: 2016/12/30 后续添加群聊
         return DBHelper.getDaoSession().getContactModelDao().queryBuilder().where(
-                ContactModelDao.Properties.UserId.eq(ChatAccountHelper.getUserId()))
+                ContactModelDao.Properties.UserId.eq(ChatAccountHelper.getUserId()),
+                ContactModelDao.Properties.GroupId.eq(0))
                 .orderAsc(ContactModelDao.Properties.LastTime)
+                .build().list();
+    }
+    /**
+     * get 联系人 list 按名字排序
+     * only chat 只有单聊，群聊先不考虑
+     *
+     * @return
+     */
+    public List<ContactModel> getContactList() {
+        // TODO: 2016/12/30 后续添加群聊
+        return DBHelper.getDaoSession().getContactModelDao().queryBuilder().where(
+                ContactModelDao.Properties.UserId.eq(ChatAccountHelper.getUserId()),
+                ContactModelDao.Properties.GroupId.eq(0))
+                .orderAsc(ContactModelDao.Properties.UserName)
                 .build().list();
     }
 
