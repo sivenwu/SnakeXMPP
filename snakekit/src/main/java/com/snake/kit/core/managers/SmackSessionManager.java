@@ -9,7 +9,6 @@ import com.snake.kit.interfaces.SnakeServiceLetterListener;
 import org.jivesoftware.smack.AbstractXMPPConnection;
 import org.jivesoftware.smack.chat.Chat;
 import org.jivesoftware.smack.chat.ChatManager;
-import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smackx.offline.OfflineMessageManager;
 
 import java.util.Map;
@@ -86,18 +85,18 @@ public class SmackSessionManager extends BaseManager implements ISessionManager{
             curChat = createChat(userJid);
         }
 
-        mSmackMessageManager.sendMessage(curChat,message);
+        mSmackMessageManager.sendMessage(curChat,userJid,message);
     }
 
     @Override
-    public void sendMessage(String userJid, Message message) {
+    public void sendMessage(String userJid, com.snake.kit.core.data.Message message) {
         Chat curChat = (Chat) mCurChatMap.get(userJid);
 
         if (curChat == null){
             curChat = createChat(userJid);
         }
 
-        mSmackMessageManager.sendMessage(curChat,message);
+        mSmackMessageManager.sendMessage(curChat,userJid,message);
     }
 
 

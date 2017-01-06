@@ -172,8 +172,8 @@ public class DBOperationManager {
                             ContactModelDao.Properties.Jid.eq(((ContactModel) object).getJid()),
                             ContactModelDao.Properties.GroupId.eq(((ContactModel) object).getGroupId()))
                     .unique();
-            if (model == null)
-                throw new SnakeRuntimeException("update fail , object does not exist");
+            if (model == null) return;
+//                throw new SnakeRuntimeException("update fail , object does not exist");
             ContactModel cacheModel = (ContactModel) object;
             if (cacheModel.getGroupId() != 0)
                 model.setGroupId(cacheModel.getGroupId());

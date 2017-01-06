@@ -11,14 +11,9 @@ import android.widget.TextView;
 import com.snake.api.apptools.LogTool;
 import com.snake.api.data.MessageModel;
 import com.snake.kit.controllers.PublicController;
-import com.snake.kit.controllers.RosterController;
 import com.snake.kit.controllers.SessionController;
 import com.snake.kit.interfaces.ChatMessageListener;
-import com.snake.kit.interfaces.ISnakeRosterListener;
 
-import java.util.List;
-
-import cn.snake.dbkit.bean.ContactModel;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -46,12 +41,12 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         // 获取所有好友
-        RosterController.getAllRosters(new ISnakeRosterListener() {
-            @Override
-            public void rosterEntires(List<ContactModel> contactModels) {
-                LogTool.e("contactModels " + contactModels.size());
-            }
-        });
+//        RosterController.getAllRosters(new ISnakeRosterListener() {
+//            @Override
+//            public void rosterEntires(List<ContactModel> contactModels) {
+//                LogTool.e("contactModels " + contactModels.size());
+//            }
+//        });
 
 
         // 测试加好友

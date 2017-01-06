@@ -2,8 +2,6 @@ package com.snake.kit.controllers;
 
 import com.snake.kit.interfaces.ChatMessageListener;
 
-import org.jivesoftware.smack.packet.Message;
-
 /**
  * Created by Yuan on 2016/11/10.
  * Detail 会话控制器
@@ -34,7 +32,7 @@ public final class SessionController extends APPController{
         getmSnakeService().sendMessage(userJid,message);
     }
 
-    public static void sendMessage(String userJid,Message message){
+    public static void sendMessage(String userJid,com.snake.kit.core.data.Message message){
         if (!isRunning()){
             return ;
         }

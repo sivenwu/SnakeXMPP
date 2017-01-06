@@ -8,33 +8,34 @@ import com.snake.db.Test;
 import com.snake.kit.core.data.bean.ACTION;
 import com.snake.kit.core.data.bean.TargetSupport;
 
+import java.lang.ref.SoftReference;
 import java.util.Map;
 
 import cn.snake.dbkit.manager.DBOperationManager;
 
 /**
  * Created by Yuan on 2016/12/11.
- * Detail snake数据库路由表
+ * Detail snake router
  */
 
 public class SnakeRouter {
 
     private final String TAG = "SnakeDbRouter";
 
-//    private Context mContext;
+    //    private Context mContext;
     private static SnakeRouter mSnakeRouter;
 
     private Map<ACTION,String> actionKits;
     private Map<ACTION,TargetSupport> actionSupports;
 
-    private Map<String,Object> objCache;
+    private Map<String,SoftReference<Object>> objCache;
 
-    public SnakeRouter() {
+    private SnakeRouter() {
         this.actionSupports = new ArrayMap<>();
         this.actionKits = new ArrayMap<>();
         this.objCache = new ArrayMap<>();
         init();
-        displayKit();
+        initComponentKit();
     }
 
     public static SnakeRouter instance(){
@@ -53,21 +54,47 @@ public class SnakeRouter {
 
     //---- public ---------------------------------------------------------------------------------
 
+    /**
+     * Create an entity by the router table of dblbrary
+     * @param name
+     * @return
+     */
     public Object dbObject(String name){
         return getObject(ACTION.DB,name);
     }
 
     /**
-     * 获取对象入口
-     * @param a 类型
-     * @param name 对象名字
+     * Create an entity by the router table of dblbrary
+     * @param name
+     * @param useCache
+     * @return
+     */
+    public Object dbObject(String name,boolean useCache){
+        return getObject(ACTION.DB,name,useCache);
+    }
+
+    /**
+     * Create a portal entity
+     * @param a action for type
+     * @param name the name of obj
      */
     public Object getObject(ACTION a,String name){
+        return getObject(a,name,true);
+    }
+
+    /**
+     * Create a portal entity
+     * @param a
+     * @param name
+     * @param useCache
+     * @return
+     */
+    public Object getObject(ACTION a,String name,boolean useCache){
 
         Object obj = null;
 
         if (objCache.containsKey(name)){
-            obj = objCache.get(name);
+            obj = objCache.get(name).get();
             return obj;
         }
 
@@ -75,7 +102,8 @@ public class SnakeRouter {
 
             TargetSupport support = actionSupports.get(a);
             obj = support.getObject(name);
-            objCache.put(name,obj);
+            if (useCache)
+                objCache.put(name,new SoftReference<Object>(obj));
             return obj;
         }
 
@@ -89,16 +117,33 @@ public class SnakeRouter {
         test.showToast(context);
     }
 
+    //- libray Whether the use of the jar
+    public boolean isUseDbLibrary(){
+        return actionSupports!=null && actionSupports.containsKey(ACTION.DB);
+    }
+
+    public boolean isUseViewLibrary(){
+        return actionSupports!=null && actionSupports.containsKey(ACTION.VIEW);
+    }
+
+    //- libray get kit
+    public DBOperationManager getDbLibarayKit(){
+        Object tmp =  dbObject("DBOperationManager");
+        if (tmp != null){
+            return (DBOperationManager) tmp;
+        }
+        return null;
+    }
 
     //---- private --------------------------------------------------------------------------------
 
     private void init(){
 
-        // 配置jar 入口
+        // Configure the jar , default
         actionKits.put(ACTION.DB,"cn.snake.dbkit.manager.DBOperationManager");// 数据库引用
     }
 
-    private void displayKit(){
+    private void initComponentKit(){
         for (Map.Entry<ACTION,String> entry : actionKits.entrySet()) {
 
             Object router = getRouter(entry.getKey());
@@ -108,13 +153,13 @@ public class SnakeRouter {
         }
     }
 
-    // 获取路由引用表
+    // Getting table of router by action kit
     private void getRouterTable(Object router){
-        //.. 待补充
+        // continuing...
 
         TargetSupport support = null;
 
-        if (router instanceof DBOperationManager){
+        if (router instanceof DBOperationManager){ // db entry
 
             LogTool.d("RouterTable from DBOperationManager");
 
@@ -125,11 +170,12 @@ public class SnakeRouter {
             LogTool.d("RouterTable is" + mSnakeDbKit.getRouterTable().toString());
 
             actionSupports.put(ACTION.DB,support);
+            objCache.put("DBOperationManager",new SoftReference<Object>(mSnakeDbKit));// cache this kit
         }
 
     }
 
-    // 获取路由
+    // Getting the router kit
     private Object getRouter(ACTION action){
 
         Object router = null;

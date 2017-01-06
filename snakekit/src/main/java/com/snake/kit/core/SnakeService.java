@@ -33,7 +33,6 @@ import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.chat.Chat;
-import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.roster.Roster;
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smack.tcp.XMPPTCPConnectionConfiguration;
@@ -258,7 +257,7 @@ public class SnakeService extends Service implements SnakeServiceLetterListener 
         sessionManager.sendMessage(userJid,message);
     }
 
-    public void sendMessage(String userJid,Message message){
+    public void sendMessage(String userJid,com.snake.kit.core.data.Message message){
         sessionManager.sendMessage(userJid,message);
     }
 
